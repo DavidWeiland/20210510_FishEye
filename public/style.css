@@ -1,4 +1,4 @@
-
+/*général*/
 body{
     font-family: "DM sans", arial;
     color:#901C1C;
@@ -7,8 +7,7 @@ body{
     margin:auto;
     box-sizing: border-box;
 }
-
-header{
+header, main{
     display: flex;
     max-width: 90%;
     margin:auto;
@@ -17,12 +16,20 @@ header{
     box-sizing: border-box;
 }
 
+/*banner*/
 .logo{
     margin-top: 42px;
     fill :#901C1C;
     height: 50px;
     width: 200px;
 }
+h1{
+    font-size: 36px;
+    margin-top: 44px;
+    font-weight: normal;
+}
+
+/*boutons de sélection*/
 .nav{
     width: 700px;
     height: 49px;
@@ -68,28 +75,33 @@ header{
     color:#901C1C;
     text-align: center;
 }
+
 .input__option:checked + label{
     background-color: #901C1C;
     color:#FFF;
 }
 
-h1{
-    font-size: 36px;
-    margin-top: 44px;
-    font-weight: normal;
-}
 @media screen and (max-width:1340px) {
+    /*général*/
     body{
         max-width: 100%;
         margin:0;
     }
-    
+
+    /*banner*/
     .logo{
         order:1;
         margin-top: 40px;
         width: auto;
         height: 44px;
     }
+    h1{
+        order:2;
+        font-size: 24px;
+        margin-top: 50px;
+    }
+
+    /*boutons sélection*/
     .nav{
         order:3;
         margin:auto;
@@ -105,19 +117,19 @@ h1{
         margin-top: 1%;
         margin-bottom: 1%;
     }
-    h1{
-        order:2;
-        font-size: 24px;
-        margin-top: 50px;
-    }
-    
 }
 
 @media screen and (max-width:426px) {
+    /*banner*/
     .logo{
         height: auto;
         max-width: 150px;
     }
+    h1{
+        font-size: 14px;
+    }
+
+    /*boutons sélection*/
     .form__option {
         margin:10px;
     }
@@ -125,11 +137,5 @@ h1{
         margin:10px;
         margin-top: 0;
         margin-bottom: 5px;
-        
-        
     }
-    h1{
-        font-size: 14px;
-    }
-    
 }
