@@ -95,13 +95,15 @@ h1{
         margin:auto;
         width: 90%;
     }
-    header ul {
-        width: 90%;
+    .form__option {
+        width: 100%;
         justify-content: center;
         margin:auto;
     }
-    header a{
-        margin:1%;
+    .btn__option{
+        margin:2%;
+        margin-top: 1%;
+        margin-bottom: 1%;
     }
     h1{
         order:2;
@@ -112,13 +114,20 @@ h1{
 }
 
 @media screen and (max-width:426px) {
-    
-    
     .logo{
         height: auto;
         max-width: 150px;
     }
-
+    .form__option {
+        margin:10px;
+    }
+    .btn__option{
+        margin:10px;
+        margin-top: 0;
+        margin-bottom: 5px;
+        
+        
+    }
     h1{
         font-size: 14px;
     }
