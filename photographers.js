@@ -21,7 +21,7 @@ function vignetPhotographers(jsonObj) {
         var pricePers = document.createElement('p');
         pricePers.setAttribute("class","vignette__price");
         var tagPers = document.createElement('ul');
-        var srcPortrait = "Images/SamplePhotos/PhotographersIdPhotos/" + pers[i].portrait;
+        var srcPortrait = "Images/SamplePhotos/PhotographersIdPhotos/Reduce/" + pers[i].portrait;
     
         imgPortrait.setAttribute("src",srcPortrait);
         namePers.textContent = pers[i].name;
