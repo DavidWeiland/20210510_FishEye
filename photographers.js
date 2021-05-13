@@ -3,7 +3,7 @@ const myNewJsonPhotographers = JSON.parse(myJsonPhotographers);
 
 const section = document.querySelector('#section');
 
-    vignetPhotographers(myNewJsonPhotographers);
+   vignetPhotographers(myNewJsonPhotographers);
 
 function vignetPhotographers(jsonObj) {
     const pers = jsonObj['photographers'];
