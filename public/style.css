@@ -7,7 +7,7 @@ body{
     margin:auto;
     box-sizing: border-box;
 }
-header, main{
+header{
     display: flex;
     max-width: 90%;
     margin:auto;
@@ -230,5 +230,6 @@ article ul li{
         margin-bottom: 5px;
     }
 }
+
 
 
