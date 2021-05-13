@@ -167,7 +167,11 @@ article ul li{
     color:#901C1C;
     text-align: center;
 }
-
+@media screen and (max-width:400px) {
+    main{
+        margin-top: 5%;
+    }
+}
 @media screen and (max-width:1340px) {
     /*général*/
     body{
@@ -227,8 +231,4 @@ article ul li{
     }
 }
 
-@media screen and (max-width:400px) {
-    main{
-        margin-top: 5%;
-    }
-}
+
