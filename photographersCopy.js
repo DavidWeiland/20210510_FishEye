@@ -16,7 +16,7 @@ fetch("fisheyedata.json")
         console.log(err);
     });
 
-//construction page index
+//construction page index base démarrage
 function vignetPhotographers(jsonObj){
     const propertyAccess = "photographers";
     const pers = jsonObj[propertyAccess];
@@ -55,7 +55,7 @@ function vignetPhotographers(jsonObj){
     }
 ;
 
-//Validation checkbox Conditions d'utilisation
+//écouteur sélection spécialité des photographers
 const option = document.querySelectorAll("input[type=radio");
 var optionValue;
 for (var j =0; j<option.length; j++) {
@@ -89,6 +89,8 @@ for (var j =0; j<option.length; j++) {
         
     })
 };
+
+//construction index avec photographers sélectionnés
 function vignetPhotographersSelected(jsonObj){
     const propertyAccess = "photographers";
     const pers = jsonObj[propertyAccess];
