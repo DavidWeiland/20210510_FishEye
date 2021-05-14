@@ -1,5 +1,5 @@
 //Validation checkbox Conditions d'utilisation
-const option = document.querySelectorAll("input[type=checkbox");
+const option = document.querySelectorAll("input[type=radio");
 for (var j =0; j<option.length; j++) {
     option[j].setAttribute("data-compteur-option",j)
     option[j].addEventListener('change',function(eventOption){
@@ -7,16 +7,16 @@ for (var j =0; j<option.length; j++) {
         var checkedVerif = option[controlOption].getAttribute("checked")
         if(!checkedVerif){
             option[controlOption].setAttribute("checked",true);
-            optionValue.push(controlOption);
+            optionValue=eventOption.target.value;
+            option[controlOption].removeAttribute("checked");
         } else {
             option[controlOption].removeAttribute("checked");
-            optionValue.pop(controlOption);
+            optionValue="";
         }
-
     })
 };
 
-var optionValue = [];
+var optionValue;
 
 //Index : photographers sur page index avec source ext
 const section = document.querySelector('#section');
