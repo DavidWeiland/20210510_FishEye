@@ -10,8 +10,6 @@ fetch("fisheyedata.json")
     })
     .then(function(data){
         vignetPhotographers(data);
-        //page photographe
-        pagePhotographer(data);
     })
     .catch(function(err){
         console.log(err);
