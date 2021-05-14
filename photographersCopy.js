@@ -1,7 +1,6 @@
 //Index : photographers sur page index avec source ext
 const section = document.querySelector('#section');
 
-
 //source externe
 fetch("fisheyedata.json")
     .then(function(res){
@@ -11,6 +10,8 @@ fetch("fisheyedata.json")
     })
     .then(function(data){
         vignetPhotographers(data);
+        //page photographe
+        pagePhotographer(data);
     })
     .catch(function(err){
         console.log(err);
@@ -48,15 +49,14 @@ function vignetPhotographers(jsonObj){
             var listItem = document.createElement('li');
             listItem.textContent = "#"+tags[j];
             tagPers.appendChild(listItem);
-            }
+        }
         vignette.appendChild(tagPers);
         section.appendChild(vignette);
-        }
     }
-;
+};
 
 //écouteur sélection spécialité des photographers
-const option = document.querySelectorAll("input[type=radio");
+const option = document.querySelectorAll("input[type=radio]");
 var optionValue;
 for (var j =0; j<option.length; j++) {
     option[j].setAttribute("data-compteur-option",j)
@@ -128,4 +128,6 @@ function vignetPhotographersSelected(jsonObj){
             vignette.appendChild(tagPers);
             section.appendChild(vignette);
             }
-        }}};
+        }
+    }
+};
