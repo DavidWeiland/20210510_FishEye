@@ -133,7 +133,7 @@ function vignetPhotographersSelected(jsonObj){
     }
 };
 
-//construction pages photographer
+//construction pages photographe
 function pagePhotographer(jsonObj){
     const propertyAccess = "photographers";
     const pers = jsonObj[propertyAccess];
