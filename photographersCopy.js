@@ -7,8 +7,8 @@ fetch("fisheyedata.json")
     })
     .then(function(data){
         vignetPhotographers(data);
-        var myJsonStringify = JSON.stringify(data)
-        localStorage.setItem("lStorage", myJsonStringify)
+        //var myJsonStringify = JSON.stringify(data)
+        //localStorage.setItem("lStorage", myJsonStringify)
         
     })
     .catch(function(err){
