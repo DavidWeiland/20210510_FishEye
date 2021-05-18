@@ -7,16 +7,17 @@ body{
     margin:auto;
     box-sizing: border-box;
 }
-header{
+/*banner*/
+.banner{
     display: flex;
     max-width: 90%;
     margin:auto;
     justify-content: space-between;
     flex-wrap: wrap;
     box-sizing: border-box;
+    background-color: #FFF;
 }
 
-/*banner*/
 .logo{
     margin-top: 42px;
     fill :#901C1C;
@@ -94,7 +95,7 @@ main{
     flex-wrap: wrap;
     justify-content: space-around;
 }
-article{
+.vignette, article{
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -102,9 +103,10 @@ article{
     width: 400px;
     height: auto;
     margin:1%;
-    
+    text-decoration: none;
     box-sizing: border-box;
     padding:2%;
+    cursor: pointer;
 }
 .vignette__photo{
     width: 200px;
@@ -139,7 +141,7 @@ article{
     color:#757575;
     text-align: center;
 }
-article ul {
+.vignette ul, article ul {
     width: 100%;
     height: 16px;
     margin-top: 5px;
@@ -153,7 +155,7 @@ article ul {
     list-style-type: none;
 }
 
-article ul li{
+.vignette ul li, article ul li{
     border: 0.5px solid #C4C4C4;
     border-radius: 11px;
     box-sizing: border-box;
@@ -247,9 +249,25 @@ article ul li{
     padding:0;
 }
 .medias{
-    width: 350px;
-    height: 350px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding:0;
+}
+.mediasInside{
+    width: 250px;
+    height: 250px;
+    margin:2%;
+    
     /*inclure image 100% x 300 px + titre + like*/
+}
+.media__photo{
+    width: 100%;
+    height:95%;
+    object-fit:cover;
 }
 
 
