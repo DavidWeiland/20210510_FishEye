@@ -23,6 +23,7 @@ body{
     fill :#901C1C;
     height: 50px;
     width: 200px;
+    cursor : pointer;
 }
 h1{
     font-size: 36px;
@@ -75,6 +76,7 @@ h1{
     font-family: "DM sans", arial;
     color:#901C1C;
     text-align: center;
+    cursor : pointer;
 }
 
 .input__option:checked + label{
