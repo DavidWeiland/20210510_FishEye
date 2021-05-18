@@ -97,6 +97,9 @@ main{
     flex-wrap: wrap;
     justify-content: space-around;
 }
+.vignette{
+    cursor: pointer;
+}
 .vignette, article{
     display: flex;
     flex-direction: column;
@@ -108,7 +111,7 @@ main{
     text-decoration: none;
     box-sizing: border-box;
     padding:2%;
-    cursor: pointer;
+    
 }
 .vignette__photo{
     width: 200px;
