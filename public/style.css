@@ -7,21 +7,23 @@ body{
     margin:auto;
     box-sizing: border-box;
 }
-header{
+/*banner*/
+.banner{
     display: flex;
     max-width: 90%;
     margin:auto;
     justify-content: space-between;
     flex-wrap: wrap;
     box-sizing: border-box;
+    background-color: #FFF;
 }
 
-/*banner*/
 .logo{
     margin-top: 42px;
     fill :#901C1C;
     height: 50px;
     width: 200px;
+    cursor : pointer;
 }
 h1{
     font-size: 36px;
@@ -74,6 +76,7 @@ h1{
     font-family: "DM sans", arial;
     color:#901C1C;
     text-align: center;
+    cursor : pointer;
 }
 
 .input__option:checked + label{
@@ -83,7 +86,7 @@ h1{
 main{
     width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
 }
 
@@ -94,7 +97,10 @@ main{
     flex-wrap: wrap;
     justify-content: space-around;
 }
-article{
+.vignette{
+    cursor: pointer;
+}
+.vignette, article{
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -102,9 +108,10 @@ article{
     width: 400px;
     height: auto;
     margin:1%;
-    
+    text-decoration: none;
     box-sizing: border-box;
     padding:2%;
+    
 }
 .vignette__photo{
     width: 200px;
@@ -139,7 +146,7 @@ article{
     color:#757575;
     text-align: center;
 }
-article ul {
+.vignette ul, article ul {
     width: 100%;
     height: 16px;
     margin-top: 5px;
@@ -153,7 +160,7 @@ article ul {
     list-style-type: none;
 }
 
-article ul li{
+.vignette ul li, article ul li{
     border: 0.5px solid #C4C4C4;
     border-radius: 11px;
     box-sizing: border-box;
@@ -167,6 +174,108 @@ article ul li{
     color:#901C1C;
     text-align: center;
 }
+
+#sectionPhotographe{
+    width: 85%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.page__photographe{
+    padding:0;
+    display: flex;
+    width: 100%;
+}
+.page__photographe--info{
+    background-color: #FAFAFA;
+    display: flex;
+    margin:0px;
+    padding: 2%;
+    box-sizing: border-box;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.vignet__photographe--label{
+    width:auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+.vignet__photographe--label > *{
+    display: flex;
+    justify-content: flex-start;
+}
+
+.vignet__photographe--label .vignette__titre{
+    font-size: 64px;
+}
+.vignet__photographe--label .vignette__city{
+    font-size: 24px;
+}
+.vignet__photographe--label .vignette__tagline{
+    font-size: 18px;
+}
+.vignet__photographe--label ul{
+    font-size: 18px;
+}
+.vignet__photographe--photo{
+    width: 20%;
+    display: flex;
+    justify-content: center;
+}
+.vignet__photographe--btn{
+    display: flex;
+    justify-content: flex-start;
+    margin:initial;
+    width: 30%;
+
+}
+.btn__contact{
+    width: 170px;
+    height: 69px;
+    background-color:#901C1C;
+    color:#FFF;
+    border:0;
+    border-radius: 5px;
+    align-self: flex-start;
+    font-size: 20px;
+    text-align: center;
+    margin-top:25px;
+}
+.plage__media{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding:0;
+}
+.medias{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding:0;
+}
+.mediasInside{
+    width: 250px;
+    height: 250px;
+    margin:2%;
+    
+    /*inclure image 100% x 300 px + titre + like*/
+}
+.media__photo{
+    width: 100%;
+    height:95%;
+    object-fit:cover;
+}
+
+
 @media screen and (max-width:400px) {
     main{
         margin-top: 5%;
