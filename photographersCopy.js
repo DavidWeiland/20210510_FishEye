@@ -162,8 +162,8 @@ function pagePhotographer(jsonObj){
     while (section.firstChild){
         section.removeChild(section.firstChild);
     };
-    nav.style.opacity = "0";
-    h1.style.opacity = "0";
+    nav.style.display = "none";
+    h1.style.display = "none";
     //bases de la fonction
     const sourcePers = jsonObj;
     const sourceMed = myJsonParse["media"];
@@ -254,7 +254,7 @@ function pagePhotographer(jsonObj){
                     likeMediaCount.setAttribute("class","media__like");
                     
                     
-                    likeMediaCount.textContent = sourceMed[j].likes+"  ";
+                    likeMediaCount.textContent = sourceMed[j].likes;
         // a incrémenter
                     var heart = document.createElement('i')
                     heart.setAttribute("class","fas fa-heart");

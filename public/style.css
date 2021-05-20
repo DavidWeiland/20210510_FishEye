@@ -382,6 +382,9 @@ h3{
         position : fixed;
         top: 85vh;
     }
+    .mediasInside{
+        width: 45%;
+    }
 }
 
 
