@@ -6,7 +6,6 @@ fetch("fisheyedata.json")
         }
     })
     .then(function(data){
-        //vignetPhotographers(data);
         var myJsonStringify = JSON.stringify(data)
         localStorage.setItem("lStorage", myJsonStringify)
     })
@@ -20,22 +19,12 @@ const myJsonParse = JSON.parse(myJson);
 //Index : photographers sur page index avec source ext
 const section = document.querySelector('#section');
 const sectionPhotographe = document.querySelector('#sectionPhotographe');
-const logo = document.querySelector('.logo');
 const nav = document.querySelector('.nav');
 const h1 = document.querySelector('h1');
 
 
-//Initialisation de la page 2
+//Initialisation de la page
 vignetPhotographers(myJsonParse);
-
-
-// btn reset
-logo.addEventListener("click", reset);
-// reset page
-function reset() {
-   document.location.reload();
-    vignetPhotographers(myJsonParse);
-}
 
 
 //construction page index base démarrage
@@ -43,36 +32,38 @@ function vignetPhotographers(jsonObj){
     const sourcePers = jsonObj["photographers"];
     for (var i = 0; i < sourcePers.length; i++) {
         var tags = sourcePers[i].tags;
-        var vignette = document.createElement('a');
-        vignette.setAttribute('href','#' + sourcePers[i].id);
-        vignette.setAttribute('class',"vignette");
-        vignette.setAttribute('onclick',"return pagePhotographer(myJsonParse.photographers["+i+"])");
+        var vignette = document.createElement('article');
+        var vignetteLien = document.createElement('a');
+        vignetteLien.setAttribute('href','#' + sourcePers[i].id);
+        vignetteLien.setAttribute('class',"vignette");
+        vignetteLien.setAttribute('onclick',"return pagePhotographer(myJsonParse.photographers["+i+"])");
         var imgPortrait = document.createElement('img');
         imgPortrait.setAttribute("class","vignette__photo");
         imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/Reduce/" + sourcePers[i].portrait);
-        vignette.appendChild(imgPortrait);
+        vignetteLien.appendChild(imgPortrait);
         var namePers = document.createElement('h2','.coucou');
         namePers.setAttribute("class","vignette__titre");
         namePers.textContent = sourcePers[i].name;
-        vignette.appendChild(namePers);
+        vignetteLien.appendChild(namePers);
         var cityPers = document.createElement('p');
         cityPers.setAttribute("class","vignette__city");
         cityPers.textContent = sourcePers[i].city + ", " + sourcePers[i].country;
-        vignette.appendChild(cityPers);
+        vignetteLien.appendChild(cityPers);
         var taglinePers = document.createElement('p');
         taglinePers.setAttribute("class","vignette__tagline");
         taglinePers.textContent = sourcePers[i].tagline;
-        vignette.appendChild(taglinePers);
+        vignetteLien.appendChild(taglinePers);
         var pricePers = document.createElement('p');
         pricePers.setAttribute("class","vignette__price");
         pricePers.textContent = sourcePers[i].price + '€/jour';
-        vignette.appendChild(pricePers);
+        vignetteLien.appendChild(pricePers);
         var tagPers = document.createElement('ul');
         for (var j = 0; j < tags.length; j++) {
             var listItem = document.createElement('li');
             listItem.textContent = "#"+tags[j];
             tagPers.appendChild(listItem);
         }
+        vignette.appendChild(vignetteLien);
         vignette.appendChild(tagPers);
         section.appendChild(vignette);
     }
