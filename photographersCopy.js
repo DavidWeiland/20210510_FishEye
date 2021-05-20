@@ -6,7 +6,7 @@ fetch("fisheyedata.json")
         }
     })
     .then(function(data){
-        vignetPhotographers(data);
+        //vignetPhotographers(data);
         var myJsonStringify = JSON.stringify(data)
         localStorage.setItem("lStorage", myJsonStringify)
     })
@@ -26,7 +26,7 @@ const h1 = document.querySelector('h1');
 
 
 //Initialisation de la page 2
-//vignetPhotographers(myJsonParse);
+vignetPhotographers(myJsonParse);
 
 
 // btn reset
@@ -57,7 +57,7 @@ function vignetPhotographers(jsonObj){
         vignette.appendChild(namePers);
         var cityPers = document.createElement('p');
         cityPers.setAttribute("class","vignette__city");
-        cityPers.textContent = sourcePers[i].city;
+        cityPers.textContent = sourcePers[i].city + ", " + sourcePers[i].country;
         vignette.appendChild(cityPers);
         var taglinePers = document.createElement('p');
         taglinePers.setAttribute("class","vignette__tagline");
@@ -129,7 +129,7 @@ function vignetPhotographersSelected(jsonObj){
                 vignette.appendChild(namePers);
                 var cityPers = document.createElement('p');
                 cityPers.setAttribute("class","vignette__city");
-                cityPers.textContent = sourcePers[i].city;
+                cityPers.textContent = sourcePers[i].city + ", " + sourcePers[i].country;
                 vignette.appendChild(cityPers);
                 var taglinePers = document.createElement('p');
                 taglinePers.setAttribute("class","vignette__tagline");
@@ -193,8 +193,7 @@ function pagePhotographer(jsonObj){
                 namePers.textContent = sourcePers.name;
             vignetPhotographeInfo1.appendChild(namePers);
                 cityPers.setAttribute("class","vignette__city");
-                cityPers.textContent = sourcePers.city;
-            vignetPhotographeInfo1.appendChild(cityPers);
+                cityPers.textContent = sourcePers.city + ", " + sourcePers.country;            vignetPhotographeInfo1.appendChild(cityPers);
                 taglinePers.setAttribute("class","vignette__tagline");
                 taglinePers.textContent = sourcePers.tagline;
             vignetPhotographeInfo1.appendChild(taglinePers);
@@ -212,7 +211,7 @@ function pagePhotographer(jsonObj){
             vignetPhotographeInfo2.appendChild(btnContact);
         pagePhotographeInfo.appendChild(vignetPhotographeInfo2);
             vignetPhotographeInfo3.setAttribute("class","vignet__photographe--info vignet__photographe--photo");
-                imgPortrait.setAttribute("class","vignette__photo");
+                imgPortrait.setAttribute("class","vignet__photo");
                 imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/Reduce/" + sourcePers.portrait);
             vignetPhotographeInfo3.appendChild(imgPortrait);
         pagePhotographeInfo.appendChild(vignetPhotographeInfo3);
@@ -228,27 +227,41 @@ function pagePhotographer(jsonObj){
                 if (photographerId === idPers) {
                     var photoMedia = document.createElement('img');
                     photoMedia.setAttribute("class","media__photo");
-                    photoMedia.setAttribute("src","Images/SamplePhotos/"+ namePersSplit[0] + "/" + sourceMed[j].image);
-                    //photoMedia.setAttribute("alt",sourceMed[j].title)
+                    photoMedia.setAttribute("src","Images/SamplePhotos/"+ namePersSplit[0] + "/resized/" + sourceMed[j].image);
+                    photoMedia.setAttribute("alt",sourceMed[j].title);
                     medias.appendChild(photoMedia);
                     console.log(sourceMed[j].image)
                     if (sourceMed[j].image == undefined){
+                        medias.removeChild(photoMedia);
                         var videoMedia = document.createElement('video');
                         videoMedia.setAttribute("class","media__photo");
-                        videoMedia.setAttribute("src","Images/SamplePhotos/"+ namePersSplit[0] + "/" + sourceMed[j].video);
+                        videoMedia.setAttribute("src","Images/SamplePhotos/"+ namePersSplit[0] + "/resized/" + sourceMed[j].video);
                         //videoMedia.setAttribute("alt",sourceMed[j].title)
                         medias.appendChild(videoMedia);
                         console.log(sourceMed[j].video)
                     }
+                    var legendMedia = document.createElement('div');
+                    legendMedia.setAttribute("class","media__legend");
+                    
                     var titreMedia = document.createElement('h3');
                     titreMedia.setAttribute("class","media__titre");
                     titreMedia.textContent = sourceMed[j].title;
-                    medias.appendChild(titreMedia);
-                    var likeMedia = document.createElement('p');
-                    likeMedia.setAttribute("class","vignette__city");
-                    likeMedia.textContent = sourceMed[j].likes;
+                    legendMedia.appendChild(titreMedia);
+                    var likeMedia=document.createElement('div');
+                    likeMedia.setAttribute("class","media__like");
+
+                    var likeMediaCount = document.createElement('p');
+                    likeMediaCount.setAttribute("class","media__like");
+                    
+                    
+                    likeMediaCount.textContent = sourceMed[j].likes+"  ";
         // a incrémenter
-                    medias.appendChild(likeMedia);
+                    var heart = document.createElement('i')
+                    heart.setAttribute("class","fas fa-heart");
+                    likeMedia.appendChild(likeMediaCount)
+                    likeMedia.appendChild(heart)
+                    legendMedia.appendChild(likeMedia);
+                    medias.appendChild(legendMedia);
                     plageMediaMedia.appendChild(medias);
                 }
                 plageMedia.appendChild(plageMediaMedia);
