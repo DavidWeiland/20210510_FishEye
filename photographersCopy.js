@@ -152,7 +152,6 @@ function vignetPhotographersSelected(jsonObj){
     }
 };
 
-
 //construction pages photographe
 function pagePhotographer(jsonObj){
     //effet page précédente
@@ -184,12 +183,11 @@ function pagePhotographer(jsonObj){
                 var imgPortrait = document.createElement('img');
         var plageMedia = document.createElement('article');
             var plageMediaMedia = document.createElement('div');
-                
         var mediaBottom = document.createElement('div');
             var totalLike = 0;
             var likeTotal = document.createElement('p');    
             var pricePers = document.createElement('p');
-    //Attributs de mise en forme et valeur
+    //Attributs de mise en forme et valeur sur entete
     pagePhotographe.setAttribute("class","page__photographe");
         pagePhotographeInfo.setAttribute("class","page__photographe--info");
             vignetPhotographeInfo1.setAttribute("class","vignet__photographe--info vignet__photographe--label");
@@ -220,33 +218,35 @@ function pagePhotographer(jsonObj){
             vignetPhotographeInfo3.appendChild(imgPortrait);
         pagePhotographeInfo.appendChild(vignetPhotographeInfo3);
     pagePhotographe.appendChild(pagePhotographeInfo);
+    // planche medias générales
     plageMedia.setAttribute("class","plage__media");
-        plageMedia.innerHTML="<p class='plage__media--tri'>Trier par</p>";
+        plageMedia.innerHTML="<p class='plage__media--tri'>Trier par</p>";//temporaire
 //bouton de tri à mettre ici
         plageMediaMedia.setAttribute('class','medias');
             for(var j = 0; j<sourceMed.length; j++){
                 var photographerId = sourceMed[j].photographerId;
                 var medias = document.createElement('div');
                 medias.setAttribute('class','mediasInside');
+                //planche medias personalisée + creations + attributs + contenus
                 if (photographerId === idPers) {
                     var photoMedia = document.createElement('img');
                     photoMedia.setAttribute("class","media__photo");
                     photoMedia.setAttribute("src","Images/SamplePhotos/"+ namePersSplit[0] + "/resized/" + sourceMed[j].image);
                     photoMedia.setAttribute("alt",sourceMed[j].title);
                     medias.appendChild(photoMedia);
-                    console.log(sourceMed[j].image)
+                    console.log(sourceMed[j].image);
+                    //correction video
                     if (sourceMed[j].image == undefined){
                         medias.removeChild(photoMedia);
                         var videoMedia = document.createElement('video');
                         videoMedia.setAttribute("class","media__photo");
                         videoMedia.setAttribute("src","Images/SamplePhotos/"+ namePersSplit[0] + "/resized/" + sourceMed[j].video);
-                        //videoMedia.setAttribute("alt",sourceMed[j].title)
+                        videoMedia.setAttribute("alt",sourceMed[j].title)
                         medias.appendChild(videoMedia);
                         console.log(sourceMed[j].video)
                     }
                     var legendMedia = document.createElement('div');
                     legendMedia.setAttribute("class","media__legend");
-                    
                     var titreMedia = document.createElement('h3');
                     titreMedia.setAttribute("class","media__titre");
                     titreMedia.textContent = sourceMed[j].title;
@@ -269,7 +269,7 @@ function pagePhotographer(jsonObj){
                 plageMedia.appendChild(plageMediaMedia);
                 pagePhotographe.appendChild(plageMedia);
             }
-
+            //creation footer media
             mediaBottom.setAttribute("class","media__bottom");
             var likeBottom = document.createElement('div');
             likeBottom.setAttribute("class","like__bottom")
@@ -279,12 +279,10 @@ function pagePhotographer(jsonObj){
                 heart.setAttribute("class","fas fa-heart");
             likeBottom.appendChild(likeTotal)
             likeBottom.appendChild(heart)
-
             pricePers.setAttribute("class","media__price");
             pricePers.textContent = sourcePers.price + '€/jour';
             mediaBottom.appendChild(likeBottom);
             mediaBottom.appendChild(pricePers);
-    
             pagePhotographe.appendChild(mediaBottom);
     sectionPhotographe.appendChild(pagePhotographe);
 };
