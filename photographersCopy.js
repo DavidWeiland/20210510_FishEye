@@ -57,12 +57,26 @@ function vignetPhotographers(jsonObj){
         pricePers.setAttribute("class","vignette__price");
         pricePers.textContent = sourcePers[i].price + '€/jour';
         vignetteLien.appendChild(pricePers);
-        var tagPers = document.createElement('ul');
+        var tagPers = document.createElement('form');
+        tagPers.setAttribute("class","form__option");
         for (var j = 0; j < tags.length; j++) {
-            var listItem = document.createElement('li');
-            listItem.textContent = "#"+tags[j];
+            var listItem = document.createElement('div');
+            listItem.setAttribute("class","btn__option");
+            var inputItem = document.createElement('input');
+                inputItem.setAttribute("class","input__option");
+                inputItem.setAttribute("type","radio");
+                inputItem.setAttribute("id",tags[j]+"2");
+                inputItem.setAttribute("name","option");
+                inputItem.setAttribute("value",tags[j]);
+            var labelItem = document.createElement('label');
+                labelItem.setAttribute("class","label__option");
+                labelItem.setAttribute("for",tags[j]+"2");
+                labelItem.textContent = "#"+tags[j];
+            listItem.appendChild(inputItem);
+            listItem.appendChild(labelItem);    
             tagPers.appendChild(listItem);
         }
+        
         vignette.appendChild(vignetteLien);
         vignette.appendChild(tagPers);
         section.appendChild(vignette);
@@ -76,7 +90,7 @@ for (var j =0; j<option.length; j++) {
     option[j].setAttribute("data-compteur-option",j)
     option[j].addEventListener('change',function(eventOption){
         var controlOption = eventOption.target.getAttribute("data-compteur-option");
-        var checkedVerif = option[controlOption].getAttribute("checked")
+        var checkedVerif = option[controlOption].getAttribute("checked",true)
         if(!checkedVerif){
             option[controlOption].setAttribute("checked",true);
             optionValue=eventOption.target.value;
@@ -106,36 +120,51 @@ function vignetPhotographersSelected(jsonObj){
             }
             //condition/comparaison spécialité et création fichephotographes
             if (tags[k] === optionValue){
-                var vignette = document.createElement('a');
-                vignette.setAttribute('href','#' + sourcePers[i].id);
-                vignette.setAttribute('class',"vignette");
-                vignette.setAttribute('onclick',"return pagePhotographer(myJsonParse.photographers["+i+"])");
+                var vignette = document.createElement('article');
+                var vignetteLien = document.createElement('a');
+                vignetteLien.setAttribute('href','#' + sourcePers[i].id);
+                vignetteLien.setAttribute('class',"vignette");
+                vignetteLien.setAttribute('onclick',"return pagePhotographer(myJsonParse.photographers["+i+"])");
                 var imgPortrait = document.createElement('img');
                 imgPortrait.setAttribute("class","vignette__photo");
                 imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/Reduce/" + sourcePers[i].portrait);
-                vignette.appendChild(imgPortrait);
+                vignetteLien.appendChild(imgPortrait);
                 var namePers = document.createElement('h2','.coucou');
                 namePers.setAttribute("class","vignette__titre");
                 namePers.textContent = sourcePers[i].name;
-                vignette.appendChild(namePers);
+                vignetteLien.appendChild(namePers);
                 var cityPers = document.createElement('p');
                 cityPers.setAttribute("class","vignette__city");
                 cityPers.textContent = sourcePers[i].city + ", " + sourcePers[i].country;
-                vignette.appendChild(cityPers);
+                vignetteLien.appendChild(cityPers);
                 var taglinePers = document.createElement('p');
                 taglinePers.setAttribute("class","vignette__tagline");
                 taglinePers.textContent = sourcePers[i].tagline;
-                vignette.appendChild(taglinePers);
+                vignetteLien.appendChild(taglinePers);
                 var pricePers = document.createElement('p');
                 pricePers.setAttribute("class","vignette__price");
                 pricePers.textContent = sourcePers[i].price + '€/jour';
-                vignette.appendChild(pricePers);
-                var tagPers = document.createElement('ul');
+                vignetteLien.appendChild(pricePers);
+                var tagPers = document.createElement('form');
+                tagPers.setAttribute("class","form__option");
                 for (var j = 0; j < tags.length; j++) {
-                    var listItem = document.createElement('li');
-                    listItem.textContent = "#"+tags[j];
+                    var listItem = document.createElement('div');
+                    listItem.setAttribute("class","btn__option");
+                    var inputItem = document.createElement('input');
+                        inputItem.setAttribute("class","input__option");
+                        inputItem.setAttribute("type","radio");
+                        inputItem.setAttribute("id",tags[j]+"2");
+                        inputItem.setAttribute("name","option");
+                        inputItem.setAttribute("value",tags[j]);
+                    var labelItem = document.createElement('label');
+                        labelItem.setAttribute("class","label__option");
+                        labelItem.setAttribute("for",tags[j]+"2");
+                        labelItem.textContent = "#"+tags[j];
+                    listItem.appendChild(inputItem);
+                    listItem.appendChild(labelItem);    
                     tagPers.appendChild(listItem);
                 }
+                vignette.appendChild(vignetteLien);
                 vignette.appendChild(tagPers);
                 section.appendChild(vignette);
             }
