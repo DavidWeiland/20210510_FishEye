@@ -254,6 +254,7 @@ main{
     justify-content: flex-start;
     align-items: flex-start;
     padding:0;
+    margin-bottom: 100px;
 }
 .medias{
     width: 100%;
@@ -307,6 +308,30 @@ h3{
     margin-left: 5px;
 }
 
+.media__bottom{
+background-color: #DB8876;
+width: 376px;
+height: 89px;
+border-radius: 5px;
+color : #000000;
+display: flex;
+justify-content: space-between;
+position:fixed;
+top:90%;
+right : 10%;
+}
+
+.like__bottom, .media__price{
+    width: auto;
+    height: 100%;
+    font-size: 24px;
+    display: flex;
+    margin:0;
+    margin-left:10%;
+    margin-right: 10%;
+    justify-content: space-between;
+    align-items: center;
+    }
 
 @media screen and (max-width:400px) {
     main{

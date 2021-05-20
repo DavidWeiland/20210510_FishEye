@@ -184,7 +184,11 @@ function pagePhotographer(jsonObj){
                 var imgPortrait = document.createElement('img');
         var plageMedia = document.createElement('article');
             var plageMediaMedia = document.createElement('div');
-        var pricePers = document.createElement('p');
+                
+        var mediaBottom = document.createElement('div');
+            var totalLike = 0;
+            var likeTotal = document.createElement('p');    
+            var pricePers = document.createElement('p');
     //Attributs de mise en forme et valeur
     pagePhotographe.setAttribute("class","page__photographe");
         pagePhotographeInfo.setAttribute("class","page__photographe--info");
@@ -249,27 +253,38 @@ function pagePhotographer(jsonObj){
                     legendMedia.appendChild(titreMedia);
                     var likeMedia=document.createElement('div');
                     likeMedia.setAttribute("class","media__like");
-
                     var likeMediaCount = document.createElement('p');
                     likeMediaCount.setAttribute("class","media__like");
-                    
-                    
                     likeMediaCount.textContent = sourceMed[j].likes;
-        // a incrémenter
-                    var heart = document.createElement('i')
+                    console.log(sourceMed[j].likes);
+                    totalLike = totalLike + sourceMed[j].likes;
+                    var heart = document.createElement('i');
                     heart.setAttribute("class","fas fa-heart");
-                    likeMedia.appendChild(likeMediaCount)
-                    likeMedia.appendChild(heart)
+                    likeMedia.appendChild(likeMediaCount);
+                    likeMedia.appendChild(heart);
                     legendMedia.appendChild(likeMedia);
                     medias.appendChild(legendMedia);
                     plageMediaMedia.appendChild(medias);
                 }
                 plageMedia.appendChild(plageMediaMedia);
                 pagePhotographe.appendChild(plageMedia);
-        //addition like ici
             }
-        pricePers.setAttribute("class","vignette__price");
-        pricePers.textContent = sourcePers.price + '€/jour';
-    pagePhotographe.appendChild(pricePers);
+
+            mediaBottom.setAttribute("class","media__bottom");
+            var likeBottom = document.createElement('div');
+            likeBottom.setAttribute("class","like__bottom")
+            likeTotal.textContent = totalLike;
+            console.log(totalLike);
+            var heart = document.createElement('i');
+                heart.setAttribute("class","fas fa-heart");
+            likeBottom.appendChild(likeTotal)
+            likeBottom.appendChild(heart)
+
+            pricePers.setAttribute("class","media__price");
+            pricePers.textContent = sourcePers.price + '€/jour';
+            mediaBottom.appendChild(likeBottom);
+            mediaBottom.appendChild(pricePers);
+    
+            pagePhotographe.appendChild(mediaBottom);
     sectionPhotographe.appendChild(pagePhotographe);
 };
