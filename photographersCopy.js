@@ -65,12 +65,12 @@ function vignetPhotographers(jsonObj){
             var inputItem = document.createElement('input');
                 inputItem.setAttribute("class","input__option");
                 inputItem.setAttribute("type","radio");
-                inputItem.setAttribute("id",tags[j]+"2");
+                inputItem.setAttribute("id",tags[j]+j);
                 inputItem.setAttribute("name","option");
                 inputItem.setAttribute("value",tags[j]);
             var labelItem = document.createElement('label');
                 labelItem.setAttribute("class","label__option");
-                labelItem.setAttribute("for",tags[j]+"2");
+                labelItem.setAttribute("for",tags[j]);
                 labelItem.textContent = "#"+tags[j];
             listItem.appendChild(inputItem);
             listItem.appendChild(labelItem);    
@@ -108,6 +108,7 @@ for (var j =0; j<option.length; j++) {
 
 //construction index avec photographers sélectionnés
 function vignetPhotographersSelected(jsonObj){
+    console.log(optionValue);
     const sourcePers = jsonObj["photographers"];
     //boucle sur Photographes
     for (var i = 0; i < sourcePers.length; i++) {
@@ -153,12 +154,12 @@ function vignetPhotographersSelected(jsonObj){
                     var inputItem = document.createElement('input');
                         inputItem.setAttribute("class","input__option");
                         inputItem.setAttribute("type","radio");
-                        inputItem.setAttribute("id",tags[j]+"2");
+                        inputItem.setAttribute("id",tags[j]+j);
                         inputItem.setAttribute("name","option");
                         inputItem.setAttribute("value",tags[j]);
                     var labelItem = document.createElement('label');
                         labelItem.setAttribute("class","label__option");
-                        labelItem.setAttribute("for",tags[j]+"2");
+                        labelItem.setAttribute("for",tags[j]);
                         labelItem.textContent = "#"+tags[j];
                     listItem.appendChild(inputItem);
                     listItem.appendChild(labelItem);    
