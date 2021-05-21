@@ -64,14 +64,16 @@ function Photographers(name){
             listItem.setAttribute("class","btn__option");
             var inputItem = document.createElement('input');
                 inputItem.setAttribute("class","input__option");
-                inputItem.setAttribute("type","radio");
-                inputItem.setAttribute("id",tags[j]+j);
+                inputItem.setAttribute("type","checkbox");
+                //inputItem.setAttribute("id",tags[j]);
                 inputItem.setAttribute("name","option");
                 inputItem.setAttribute("value",tags[j]);
             var labelItem = document.createElement('label');
                 labelItem.setAttribute("class","label__option");
                 labelItem.setAttribute("for",tags[j]);
-                labelItem.textContent = "#"+tags[j];
+                var span = document.createElement('span');
+                span.textContent = "#"+tags[j];
+                labelItem.appendChild(span);
             listItem.appendChild(inputItem);
             listItem.appendChild(labelItem);    
             tagPers.appendChild(listItem);
@@ -91,25 +93,32 @@ for ( i = 0; i < sourceJson.length; i++){
 }}
 
 //écouteur sélection spécialité des photographers
-const option = document.querySelectorAll("input[type=radio]");
+const option = document.querySelectorAll("input[type=checkbox]");
 var optionValue;
-for (var j =0; j<option.length; j++) {
-    option[j].setAttribute("data-compteur-option",j)
-    option[j].addEventListener('change',function(eventOption){
-        var controlOption = eventOption.target.getAttribute("data-compteur-option");
-        var checkedVerif = option[controlOption].getAttribute("checked",true)
+for ( var cbx =0; cbx<option.length; cbx++) {
+    option[cbx].addEventListener('click',function(eventOption){
+        var checkedVerif = eventOption.target.getAttribute("checked",true);
+        for(var cbx2 = 0; cbx2<option.length;cbx2++){
+            if (option[cbx2].getAttribute("checked")){
+            option[cbx2].setAttribute("checked",false);
+        }
         if(!checkedVerif){
-            option[controlOption].setAttribute("checked",true);
+            eventOption.target.setAttribute("checked",true);
             optionValue=eventOption.target.value;
-            option[controlOption].removeAttribute("checked");
             while (section.firstChild){
                 section.removeChild(section.firstChild);
             };
             vignetPhotographersSelected(myJsonParse);
         } else {
-            option[controlOption].removeAttribute("checked");
+            eventOption.target.removeAttribute("checked",false);
             optionValue="";
-        }})};
+            
+            while (section.firstChild){
+                section.removeChild(section.firstChild);
+            };
+            vignetPhotographers(myJsonParse);
+}}})};
+
 
 function vignetPhotographersSelected (jsonObj){
     var sourceJsonSelect = jsonObj["photographers"];
@@ -124,10 +133,7 @@ for (i = 0; i < sourceJsonSelect.length; i++) {
         //condition/comparaison spécialité et création fichephotographes
         if (tags[k] === optionValue){
             construction(sourceJsonSelect)
-        } else if (optionValue==undefined || optionValue =="") {
-
-        }
-}}};
+}}}};
 
 function construction(myJsonObj){
     var myPhotographer = new Photographers(myJsonObj[i].name);
@@ -139,9 +145,9 @@ function construction(myJsonObj){
     myPhotographer.price = myJsonObj[i].price;
     myPhotographer.portrait = myJsonObj[i].portrait;
     myPhotographer.getInfo();
-    }
+}
 
-    //construction pages photographe
+//construction pages photographe
 function pagePhotographer(jsonObj){
     //effet page précédente
     while (sectionPhotographe.firstChild){
@@ -274,13 +280,12 @@ function pagePhotographer(jsonObj){
     sectionPhotographe.appendChild(pagePhotographe);
 };
 
-var triValue = "popularité";
+var triValue = "";
 if (triValue ==="popularité"){ 
 //if tri = popularité, construire sur ce tableau
     myJsonParse["media"].sort(function(a,b){
         return a.likes-b.likes;
-    });
-}
+});}
 
 if (triValue === 'titre'){
     const tableauMedia = myJsonParse["media"];

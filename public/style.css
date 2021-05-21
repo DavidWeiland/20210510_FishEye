@@ -79,10 +79,11 @@ h1{
     cursor : pointer;
 }
 
-.input__option:checked + label{
+.input__option[checked=true] + label{
     background-color: #901C1C;
     color:#FFF;
 }
+
 main{
     width: 100%;
     display: flex;
