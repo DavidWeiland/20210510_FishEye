@@ -84,6 +84,7 @@ function Photographers(name){
     }}
 
 vignetPhotographers(myJsonParse);
+
 var i ; //var de boucle commune
 
 function vignetPhotographers(jsonObj){
@@ -147,147 +148,301 @@ function construction(myJsonObj){
     myPhotographer.getInfo();
 }
 
+var sourcePers;
+var totalLike;
+
 //construction pages photographe
 function pagePhotographer(jsonObj){
-    //effet page précédente
-    while (sectionPhotographe.firstChild){
-        sectionPhotographe.removeChild(sectionPhotographe.firstChild);
-    };
+    sourcePers = jsonObj;
+//initialisation
     while (section.firstChild){
         section.removeChild(section.firstChild);
     };
     nav.style.display = "none";
     h1.style.display = "none";
-    //bases de la fonction
-    const sourcePers = jsonObj;
-    const sourceMed = myJsonParse["media"];
-    var idPers = sourcePers.id;
-    var namePersSplit = sourcePers.name.split(" ");
-    var tags = sourcePers.tags;
-    //Element HTML à créer
+    totalLike = 0;
     var pagePhotographe = document.createElement('article');
-        var pagePhotographeInfo = document.createElement('div');
-            var vignetPhotographeInfo1 = document.createElement('div');
-                var namePers = document.createElement('h2');
-                var cityPers = document.createElement('p');
-                var taglinePers = document.createElement('p');
-                var tagPers = document.createElement('ul');
-            var vignetPhotographeInfo2 = document.createElement('div');
-                var btnContact = document.createElement('button');
-            var vignetPhotographeInfo3 = document.createElement('div');
-                var imgPortrait = document.createElement('img');
-        var plageMedia = document.createElement('article');
-            var plageMediaMedia = document.createElement('div');
-        var mediaBottom = document.createElement('div');
-            var totalLike = 0;
-            var likeTotal = document.createElement('p');    
-            var pricePers = document.createElement('p');
-    //Attributs de mise en forme et valeur sur entete
     pagePhotographe.setAttribute("class","page__photographe");
+        var pagePhotographeInfo = document.createElement('div');
         pagePhotographeInfo.setAttribute("class","page__photographe--info");
+        sectionPhotographe.appendChild(pagePhotographeInfo);
+        var triMedia = document.createElement('article');
+        triMedia.setAttribute("class","tri__medias");
+        sectionPhotographe.appendChild(triMedia);
+        var plageMedia = document.createElement('article');
+        plageMedia.setAttribute("class","plage__media");
+        sectionPhotographe.appendChild(plageMedia);
+        var mediaBottom = document.createElement('div');
+    mediaBottom.setAttribute("class","media__bottom");
+    sectionPhotographe.appendChild(mediaBottom);
+
+//Header Photographer
+            var vignetPhotographeInfo1 = document.createElement('div');
             vignetPhotographeInfo1.setAttribute("class","vignet__photographe--info vignet__photographe--label");
+                var namePers = document.createElement('h2');
                 namePers.setAttribute("class","vignette__titre");
                 namePers.textContent = sourcePers.name;
             vignetPhotographeInfo1.appendChild(namePers);
+                var cityPers = document.createElement('p');
                 cityPers.setAttribute("class","vignette__city");
-                cityPers.textContent = sourcePers.city + ", " + sourcePers.country;            vignetPhotographeInfo1.appendChild(cityPers);
+                cityPers.textContent = sourcePers.city + ", " + sourcePers.country;
+            vignetPhotographeInfo1.appendChild(cityPers);
+                var taglinePers = document.createElement('p');
                 taglinePers.setAttribute("class","vignette__tagline");
                 taglinePers.textContent = sourcePers.tagline;
             vignetPhotographeInfo1.appendChild(taglinePers);
-                for (var j = 0; j < tags.length; j++) {
+                var tagPers = document.createElement('ul');
+                for (var j = 0; j < sourcePers.tags.length; j++) {
                     var listItem = document.createElement('li');
-                    listItem.textContent = "#"+tags[j];
+                    listItem.textContent = "#"+sourcePers.tags[j];
                     tagPers.appendChild(listItem);
                 }
             vignetPhotographeInfo1.appendChild(tagPers);
         pagePhotographeInfo.appendChild(vignetPhotographeInfo1);
+            var vignetPhotographeInfo2 = document.createElement('div');
             vignetPhotographeInfo2.setAttribute("class","vignet__photographe--info vignet__photographe--btn");
+                var btnContact = document.createElement('button');
                 btnContact.setAttribute("class","btn__contact");
                 btnContact.setAttribute("value","Contactez-moi");
                 btnContact.innerText="Contactez-moi";
             vignetPhotographeInfo2.appendChild(btnContact);
         pagePhotographeInfo.appendChild(vignetPhotographeInfo2);
+            var vignetPhotographeInfo3 = document.createElement('div');
             vignetPhotographeInfo3.setAttribute("class","vignet__photographe--info vignet__photographe--photo");
+                var imgPortrait = document.createElement('img');
                 imgPortrait.setAttribute("class","vignet__photo");
                 imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/Reduce/" + sourcePers.portrait);
             vignetPhotographeInfo3.appendChild(imgPortrait);
         pagePhotographeInfo.appendChild(vignetPhotographeInfo3);
-    pagePhotographe.appendChild(pagePhotographeInfo);
-    // planche medias générales
-    plageMedia.setAttribute("class","plage__media");
-        plageMedia.innerHTML="<p class='plage__media--tri'>Trier par</p>";//temporaire
-//bouton de tri à mettre ici
-        plageMediaMedia.setAttribute('class','medias');
-//mettre if tri ici
-            for(var j = 0; j<sourceMed.length; j++){
-                var photographerId = sourceMed[j].photographerId;
-                var medias = document.createElement('div');
-                medias.setAttribute('class','mediasInside');
-                //planche medias personalisée + creations + attributs + contenus
-                if (photographerId === idPers) {
-                    var photoMedia = document.createElement('img');
-                    photoMedia.setAttribute("class","media__photo");
-                    photoMedia.setAttribute("src","Images/SamplePhotos/"+ namePersSplit[0] + "/resized/" + sourceMed[j].image);
-                    photoMedia.setAttribute("alt",sourceMed[j].title);
-                    medias.appendChild(photoMedia);
-                    console.log(sourceMed[j].title)
-                    //correction video
-                    if (sourceMed[j].image == undefined){
-                        medias.removeChild(photoMedia);
-                        var videoMedia = document.createElement('video');
-                        videoMedia.setAttribute("class","media__photo");
-                        videoMedia.setAttribute("src","Images/SamplePhotos/"+ namePersSplit[0] + "/resized/" + sourceMed[j].video);
-                        videoMedia.setAttribute("alt",sourceMed[j].title)
-                        medias.appendChild(videoMedia);
+
+//bouton de tri (base)
+        const triLabel = document.createElement('label');
+        triLabel.setAttribute("for","triSelect");
+        triLabel.setAttribute("class","tri__label");
+        triLabel.setAttribute("value","");
+        triLabel.textContent = "Trier par";
+        triMedia.appendChild(triLabel);
+        var divMedia = document.createElement('div');
+        divMedia.setAttribute('class','custom-select');
+        const triSelect = document.createElement('select');
+        triSelect.setAttribute("id","triSelect");
+        const triOptionDefault = document.createElement('option');
+        triOptionDefault.setAttribute("value","");
+        triOptionDefault.textContent = "--choisir une option de tri--";
+        const triOptionDate = document.createElement('option');
+        triOptionDate.setAttribute("value","date");
+        triOptionDate.textContent = "Date";
+        const triOptionTitre = document.createElement('option');
+        triOptionTitre.setAttribute("value","titre");
+        triOptionTitre.textContent = "Titre";
+        const triOptionPopularite = document.createElement('option');
+        triOptionPopularite.setAttribute("value","popularité");
+        triOptionPopularite.textContent = "Popularité";
+        triSelect.appendChild(triOptionDefault);
+        triSelect.appendChild(triOptionPopularite);
+        triSelect.appendChild(triOptionDate);
+        triSelect.appendChild(triOptionTitre);
+        divMedia.appendChild(triSelect);
+    triMedia.appendChild(divMedia);
+// customisation bouton de tri    
+    var customSelect = document.getElementsByClassName("custom-select");
+    for (var customCompteur = 0; customCompteur < customSelect.length; customCompteur++) {
+        var selectCopy = customSelect[customCompteur].getElementsByTagName("select")[0];
+        selectSelected = document.createElement("DIV");
+        selectSelected.setAttribute("class", "select-selected");
+        selectSelected.innerHTML = selectCopy.options[selectCopy.selectedIndex].innerHTML;
+        customSelect[customCompteur].appendChild(selectSelected);
+        selectItems = document.createElement("DIV");
+        selectItems.setAttribute("class", "select-items select-hide");
+        for (var selectCopyI = 1; selectCopyI < selectCopy.length; selectCopyI++) {
+            var optionElement = document.createElement("DIV");
+            optionElement.innerHTML = selectCopy.options[selectCopyI].innerHTML;
+            optionElement.addEventListener("click", function(e) {
+                selectOrigine = this.parentNode.parentNode.getElementsByTagName("select")[0];
+                var selectOrigineCiblePrev = this.parentNode.previousSibling;
+                for (var conpteurSelectOrigine = 0; conpteurSelectOrigine < selectOrigine.length; conpteurSelectOrigine++) {
+                    if (selectOrigine.options[conpteurSelectOrigine].innerHTML == this.innerHTML) {
+                        selectOrigine.selectedIndex = conpteurSelectOrigine;
+                        selectOrigineCiblePrev.innerHTML = this.innerHTML;
+                        var sameSelected = this.parentNode.getElementsByClassName("same-as-selected");
+                        triValue = document.querySelector("#triSelect").value;
+                        for (compteurSelectOrigine = 0; compteurSelectOrigine < sameSelected.length; compteurSelectOrigine++) {
+                            sameSelected[compteurSelectOrigine].removeAttribute("class");
+                        }
+                        this.setAttribute("class", "same-as-selected");
+                        break;
                     }
-                    var legendMedia = document.createElement('div');
-                    legendMedia.setAttribute("class","media__legend");
-                    var titreMedia = document.createElement('h3');
-                    titreMedia.setAttribute("class","media__titre");
-                    titreMedia.textContent = sourceMed[j].title;
-                    legendMedia.appendChild(titreMedia);
-                    var likeMedia=document.createElement('div');
-                    likeMedia.setAttribute("class","media__like");
-                    var likeMediaCount = document.createElement('p');
-                    likeMediaCount.setAttribute("class","media__like");
-                    likeMediaCount.textContent = sourceMed[j].likes;
-                    totalLike = totalLike + sourceMed[j].likes;
-                    var heart = document.createElement('i');
-                    heart.setAttribute("class","fas fa-heart");
-                    likeMedia.appendChild(likeMediaCount);
-                    likeMedia.appendChild(heart);
-                    legendMedia.appendChild(likeMedia);
-                    medias.appendChild(legendMedia);
-                    plageMediaMedia.appendChild(medias);
                 }
-                plageMedia.appendChild(plageMediaMedia);
-                pagePhotographe.appendChild(plageMedia);
+                selectOrigineCiblePrev.click();
+            });
+        selectItems.appendChild(optionElement);
+        }
+        customSelect[customCompteur].appendChild(selectItems);
+
+        selectSelected.addEventListener("click", function(e) {
+            e.stopPropagation();
+            closeAllSelect(this);
+            this.nextSibling.classList.toggle("select-hide");
+            this.classList.toggle("select-arrow-active");
+        });
+
+        selectItems.addEventListener("click",function(event){
+            event.stopPropagation();
+        if (triValue === "popularité"){ 
+            myJsonParse["media"].sort(function(a,b){
+                return a.likes-b.likes;
+            });
+        } else if (triValue === 'titre'){
+            myJsonParse["media"].sort(function compare(a,b){
+                if(a.title < b.title)
+                    return-1;
+                if(a.title>b.title)
+                    return 1;
+                return 0;
+            });
+        } else if (triValue === 'date'){
+            myJsonParse["media"].sort(function compare(a,b){
+                if(a.date < b.date)
+                    return-1;
+                if(a.date>b.date)
+                    return 1;
+                return 0;
+            });
+        }
+        while (plageMedia.firstChild){
+        plageMedia.removeChild(plageMedia.firstChild);
+        }
+        plancheImage();
+        });
+    }
+    
+    function closeAllSelect(elmnt) {
+        var i, arrNo = [];
+        var selectItems = document.getElementsByClassName("select-items");
+        var selectSelected = document.getElementsByClassName("select-selected");
+        for (i = 0; i < selectSelected.length; i++) {
+            if (elmnt == selectSelected[i]) {
+                arrNo.push(i)
+            } else {
+                selectSelected[i].classList.remove("select-arrow-active");
             }
-            //creation footer media
-            mediaBottom.setAttribute("class","media__bottom");
-            var likeBottom = document.createElement('div');
-            likeBottom.setAttribute("class","like__bottom")
+        }
+        for (i = 0; i < selectItems.length; i++) {
+            if (arrNo.indexOf(i)) {
+                selectItems[i].classList.add("select-hide");
+            }
+        }
+    }
+    document.addEventListener("click", closeAllSelect);
+
+//planche medias
+    plancheImage()
+
+//creation footer media
+        var likeBottom = document.createElement('div');
+        likeBottom.setAttribute("class","like__bottom");
+            var likeTotal = document.createElement('p');    
             likeTotal.textContent = totalLike;
+        likeBottom.appendChild(likeTotal)
             var heart = document.createElement('i');
-                heart.setAttribute("class","fas fa-heart");
-            likeBottom.appendChild(likeTotal)
-            likeBottom.appendChild(heart)
-            pricePers.setAttribute("class","media__price");
-            pricePers.textContent = sourcePers.price + '€/jour';
-            mediaBottom.appendChild(likeBottom);
-            mediaBottom.appendChild(pricePers);
-            pagePhotographe.appendChild(mediaBottom);
-    sectionPhotographe.appendChild(pagePhotographe);
+            heart.setAttribute("class","fas fa-heart");
+        likeBottom.appendChild(heart)
+    mediaBottom.appendChild(likeBottom);
+        var pricePers = document.createElement('p');
+        pricePers.setAttribute("class","media__price");
+        pricePers.textContent = sourcePers.price + '€/jour';
+    mediaBottom.appendChild(pricePers);
 };
 
-var triValue = "";
-if (triValue ==="popularité"){ 
-//if tri = popularité, construire sur ce tableau
-    myJsonParse["media"].sort(function(a,b){
-        return a.likes-b.likes;
-});}
+var triValue="";
 
-if (triValue === 'titre'){
-    const tableauMedia = myJsonParse["media"];
-    tableauMedia.sort(title);    
+//à placer en début de JS avec class Photographers
+function Image(options){
+    this.id = options.id;
+    this.photographerId = options.photographerId;
+    this.title = options.title;
+    this.image = options.image;
+    this.tags = options.tags;
+    this.likes = options.likes;
+    this.date = options.date;
+    this.price = options.price;
 }
+
+function Video(options){
+    this.id = options.id;
+    this.photographerId = options.photographerId;
+    this.title = options.title;
+    this.video = options.video;
+    this.tags = options.tags;
+    this.likes = options.likes;
+    this.date = options.date;
+    this.price = options.price;
+}
+
+function ImageFactory(){}
+ImageFactory.prototype.mediaClass = Image;
+ImageFactory.prototype.createMedia = function(options){
+    switch(options.mediaType){
+        case "image":
+            this.mediaClass = Image;
+            break;
+        case "video":
+            this.mediaClass = Video;
+            break;
+    }
+    return new this.mediaClass(options);
+};
+
+function VideoFactory(){}
+VideoFactory.prototype = new ImageFactory();
+VideoFactory.prototype.mediaClass=Video;
+
+function plancheImage(){
+    var plageMedia = document.querySelector('.plage__media');
+    var plageMediaMedia = document.createElement('div');
+    plageMediaMedia.setAttribute('class','medias');
+for(var mediacompteur = 0; mediacompteur<myJsonParse["media"].length; mediacompteur++){
+    var media=myJsonParse["media"][mediacompteur];
+    var medias = document.createElement('div');
+    medias.setAttribute('class','mediasInside');
+    if(media.photographerId===sourcePers.id){
+        if (media.video === undefined){
+            var imageFactory = new ImageFactory();
+            var image = imageFactory.createMedia(media);
+            var photoMedia = document.createElement('img');
+            photoMedia.setAttribute("class","media__photo");
+            photoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.image);
+            photoMedia.setAttribute("alt",media.title);
+            medias.appendChild(photoMedia);
+        }
+        if(media.image === undefined){
+            var videoFactory = new VideoFactory();
+            var video = videoFactory.createMedia(media);
+            var videoMedia = document.createElement('video');
+            videoMedia.setAttribute("class","media__photo");
+            videoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.video);
+            videoMedia.setAttribute("alt",media.title);
+            medias.appendChild(videoMedia);
+        }
+        var legendMedia = document.createElement('div');
+        legendMedia.setAttribute("class","media__legend");
+        var titreMedia = document.createElement('h3');
+        titreMedia.setAttribute("class","media__titre");
+        titreMedia.textContent = media.title;
+        legendMedia.appendChild(titreMedia);
+        var likeMedia=document.createElement('div');
+        likeMedia.setAttribute("class","media__like");
+        var likeMediaCount = document.createElement('p');
+        likeMediaCount.setAttribute("class","media__like");
+        likeMediaCount.textContent = media.likes;
+        totalLike = totalLike + media.likes;
+        var heart = document.createElement('i');
+        heart.setAttribute("class","fas fa-heart");
+        likeMedia.appendChild(likeMediaCount);
+        likeMedia.appendChild(heart);
+        legendMedia.appendChild(likeMedia);
+        medias.appendChild(legendMedia);
+        plageMediaMedia.appendChild(medias);
+    }
+    plageMedia.appendChild(plageMediaMedia)
+}};
