@@ -265,13 +265,13 @@ main{
 }
 
 .custom-select{
-    width: 300px;
+    width: 200px;
     margin-left: 10px;
     position: relative;
     border-radius: 5px;
 }
 .custom-select select{
-    display:none;  /*à masquer*/
+    display:none;
     margin-left:10px;
     background: #901C1C;
     color: #FFF;
@@ -322,7 +322,6 @@ main{
     background-color: #DB8876;
     color:#000000;
 }
-/*.same-as-selected{}*/
 
 .medias{
     width: 100%;
@@ -478,8 +477,11 @@ right : 10%;
     .mediasInside{
         width: 45%;
     }
+    .media__bottom{
+        position:static;
+        margin-bottom: 150px;
+        }
 }
-
 
 @media screen and (max-width:426px) {
     .vignet__photographe--label .vignette__titre{
