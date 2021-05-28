@@ -250,6 +250,7 @@ main{
     font-size: 20px;
     text-align: center;
     margin-top:5px;
+    cursor: pointer;
 }
 .plage__media, .tri__medias{
     width: 100%;
@@ -265,7 +266,7 @@ main{
 }
 
 .custom-select{
-    width: 200px;
+    width: 250px;
     margin-left: 10px;
     position: relative;
     border-radius: 5px;
@@ -282,35 +283,37 @@ main{
 .select-selected{
     background-color: #901C1C;
     border-radius: 5px;
+    color:#000000;
 
 }
-.select-seleted:after{
+.select-selected:after{
     position:absolute;
-    content:"";
-    top:14px;
+    content:">";
+    transform: rotate(90deg);
+    text-align: center;
+    top:10px;
     right: 10px;
-    width: 0;
-    height: 0;
-    border:6px solid transparent;
-    border-color: #fff transparent transparent transparent;
-    border-radius: 5px;
+    width: 23px;
+    height: 23px;
 }
 .select-selected.select-arrow-active:after{
-    border-color: transparent transparent #fff transparent;
-    top:7px;
+    transform: rotate(-90deg);
+    top:10px;
+    right:10px;
 }
 
 .select-items div,.select-selected{
     color:#fff;
     padding:8px 16px;
     border: 1px solid transparent;
-    border-color: transparent transparent rgba(255, 255, 255, 0.9) transparent;
+    border-color: rgba(255, 255, 255, 0.9) transparent transparent  transparent;
     cursor: pointer;
 }
 .select-items{
     position: absolute;
     background-color: #901C1C;
-    top:100%;
+    border-radius: 0px 0px 5px 5px;
+    top:90%;
     left:0;
     right: 0;
     z-index: 99;
@@ -398,7 +401,122 @@ right : 10%;
     margin-right: 10%;
     justify-content: space-between;
     align-items: center;
-    }
+}
+
+.bground {
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+    background-color: rgba(255, 255, 255, 0.8);
+}
+.content {
+    margin: 5% auto;
+    width: 100%;
+    max-width: 670px;
+    height: 85vh;
+    background: #DB8876;
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+    color: #000000;
+    padding-top: 10px;
+}
+.modal-body, .entete-modal {
+    padding: 0px 8%;
+    margin:auto;
+}
+.entete-modal h3{
+    padding-top: 0;
+    font-size: 64px;
+}
+label {
+    color:#312E2E;
+    font-size: 36px;
+    font-weight: normal;
+    display: inline-block;
+}
+.formData input {
+    height: 68px;
+    padding: 8px;
+    border: 0;
+    outline: none;
+}
+.formData textarea{
+    height: 170px;
+}
+.text-control {
+    margin: 0;
+    padding: 8px;
+    width: 100%;
+    border-radius: 8px;
+    font-size: 36px;
+    height: 48px;
+}
+.formData[data-error]::after {
+    content: attr(data-error);
+    font-size: 0.4em;
+    color: #e54858;
+    display: block;
+    margin-top: 7px;
+    margin-bottom: 7px;
+    text-align: right;
+    line-height: 0.3;
+    opacity: 0;
+    transition: 0.3s;
+}
+.formData[data-error-visible="true"]::after {
+    opacity: 1;
+}
+.formData[data-error-visible="true"] .text-control {
+    border: 2px solid #e54858;
+}
+.formData[data-error-visible="false"]::after {
+    opacity: 1;
+}
+.formData[data-error-visible="false"] .text-control {
+    border: 2px solid #279e7a;
+}      
+.close {
+    position: absolute;
+    right: 15px;
+    top: 20px;
+    width: 80px;
+    height: 80px;
+    opacity: 1;
+    cursor: pointer;
+    transform: scale(0.7);
+}
+.close:before,
+.close:after {
+    position: absolute;
+    left: 15px;
+    content: " ";
+    height: 80px;
+    width: 8px;
+    background-color: #fff;
+}
+.close:before {
+    transform: rotate(45deg);
+}
+.close:after {
+    transform: rotate(-45deg);
+}
+.btn-submit,
+.btn-signup {
+    background: #fe142f;
+    display: block;
+    margin: 0 auto;
+    border-radius: 7px;
+    font-size: 1rem;
+    padding: 12px 82px;
+    color: #fff;
+    cursor: pointer;
+    border: 0;
+}
 
 @media screen and (max-width:400px) {
     main{
