@@ -20,6 +20,7 @@ const section = document.querySelector('#section');
 const sectionPhotographe = document.querySelector('#sectionPhotographe');
 const nav = document.querySelector('.nav');
 const h1 = document.querySelector('h1');
+const retourBtn = document.querySelector('.retour');
 
 //constructeur vignette Photographers
 function Photographers(name){
@@ -149,6 +150,7 @@ function construction(myJsonObj){
 }
 
 var sourcePers;
+var likes;
 var totalLike;
 
 //construction pages photographe
@@ -160,6 +162,7 @@ function pagePhotographer(jsonObj){
     };
     nav.style.display = "none";
     h1.style.display = "none";
+    retourBtn.style.display='none';
     totalLike = 0;
     var pagePhotographe = document.createElement('article');
     pagePhotographe.setAttribute("class","page__photographe");
@@ -406,24 +409,31 @@ for(var mediacompteur = 0; mediacompteur<myJsonParse["media"].length; mediacompt
     var media=myJsonParse["media"][mediacompteur];
     var medias = document.createElement('div');
     medias.setAttribute('class','mediasInside');
+    var lightboxLien = document.createElement('a');
     if(media.photographerId===sourcePers.id){
         if (media.video === undefined){
             var imageFactory = new ImageFactory();
             var image = imageFactory.createMedia(media);
+            lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.image)
             var photoMedia = document.createElement('img');
             photoMedia.setAttribute("class","media__photo");
             photoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.image);
             photoMedia.setAttribute("alt",media.title);
-            medias.appendChild(photoMedia);
+            lightboxLien.appendChild(photoMedia)
+            medias.appendChild(lightboxLien);
         }
         if(media.image === undefined){
             var videoFactory = new VideoFactory();
             var video = videoFactory.createMedia(media);
+            lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.video)
             var videoMedia = document.createElement('video');
             videoMedia.setAttribute("class","media__photo");
-            videoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.video);
+            var videoMediaSrc = document.createElement('source')
+            videoMediaSrc.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.video);
             videoMedia.setAttribute("alt",media.title);
-            medias.appendChild(videoMedia);
+            videoMedia.appendChild(videoMediaSrc)
+            lightboxLien.appendChild(videoMedia)
+            medias.appendChild(lightboxLien);
         }
         var legendMedia = document.createElement('div');
         legendMedia.setAttribute("class","media__legend");
@@ -431,34 +441,149 @@ for(var mediacompteur = 0; mediacompteur<myJsonParse["media"].length; mediacompt
         titreMedia.setAttribute("class","media__titre");
         titreMedia.textContent = media.title;
         legendMedia.appendChild(titreMedia);
+
         var likeMedia=document.createElement('div');
         likeMedia.setAttribute("class","media__like");
+        
         var likeMediaCount = document.createElement('p');
         likeMediaCount.setAttribute("class","media__like");
-        likeMediaCount.textContent = media.likes;
-        totalLike = totalLike + media.likes;
+        var heartSpan = document.createElement('button');
+        
         var heart = document.createElement('i');
         heart.setAttribute("class","fas fa-heart");
+        
         likeMedia.appendChild(likeMediaCount);
-        likeMedia.appendChild(heart);
+        heartSpan.appendChild(heart);
+        likeMedia.appendChild(heartSpan);
+        likes = media.likes;
+        heartSpan.setAttribute('value',likes);
+
+        likeMediaCount.textContent = likes;
+        totalLike = totalLike + likes;
+        
         legendMedia.appendChild(likeMedia);
         medias.appendChild(legendMedia);
         plageMediaMedia.appendChild(medias);
+        
     }
-    plageMedia.appendChild(plageMediaMedia)
-}};
+    plageMedia.appendChild(plageMediaMedia);
+}
+    class Lightbox{
+        static init(){
+            const links=Array.from(document.querySelectorAll('a[href$=".jpg"], a[href$=".mp4"]'))
+            const gallery = links.map(link => link.getAttribute('href'))
+            links.forEach(link => link.addEventListener('click', e => {
+                    e.preventDefault()
+                    new Lightbox(e.currentTarget.getAttribute('href'), gallery)
+                }))
+        }
+    
+        constructor (url, gallery){
+            this.element = this.buildDOM(url);
+            this.gallery = gallery;
+            this.loadImage(url);
+            this.onKeyUp = this.onKeyUp.bind(this)
+            document.body.appendChild(this.element);
+            document.addEventListener('keyup', this.onKeyUp);
+        }
+        loadImage(url){
+            this.url=null
+            var image;
+            if (url.split('.')[1]==="jpg"){
+            image = document.createElement('img');
+            console.log(image)
+            } else if (url.split('.')[1]==="mp4"){
+            image = document.createElement('video');
+
+            const imageSrc = document.createElement('source');
+            imageSrc.setAttribute('src',url);
+            image.appendChild(imageSrc);
+            console.log(image);
+            }
+            const container = this.element.querySelector('.lightbox__container');
+            const loader = document.createElement('div')
+            loader.classList.add('lightbox__loader');
+            container.innerHTML =''
+            container.appendChild(loader);
+            this.url=url;
+            image.onload = () => {
+                console.log("chargée")
+                container.removeChild(loader);
+                container.appendChild(image);
+            }
+            image.src = url;
+        }
+    onKeyUp (e){
+        if(e.key==='Escape'){
+            this.close(e)
+        }else if(e.key==='ArrowLeft'){
+            this.prev(e)
+        }else if(e.key==='ArrowRight'){
+            this.next(e)
+        }
+    }
+        
+    close (e){
+        e.preventDefault()
+        this.element.classList.add('fadeOut')
+        window.setTimeout(()=>{
+            this.element.parentElement.removeChild(this.element)
+        }, 500)
+        document.removeEventListener('keyup', this.onKeyUp);
+    }
+    
+    next (e){
+    e.preventDefault()
+    var i = this.gallery.findIndex(image => image === this.url)
+    if (i=== this.gallery.length -1){
+        i = -1
+    }
+    this.loadImage(this.gallery[i + 1])
+    }
+    
+    prev (e){
+    e.preventDefault()
+    var i = this.gallery.findIndex(image => image === this.url)
+    if (i=== 0){
+        i = this.gallery.length
+    }
+    this.loadImage(this.gallery[i - 1])
+    }
+    
+        buildDOM(url){
+            const dom = document.createElement('div');
+            dom.classList.add('lightbox');
+            dom.innerHTML = '<button class="lightbox__close">Fermer</button><button class="lightbox__next">Suivant</button><button class="lightbox__prev">Précédent</button><div class="lightbox__container"></div>';
+            dom.querySelector('.lightbox__close').addEventListener('click',this.close.bind(this))
+            dom.querySelector('.lightbox__next').addEventListener('click',this.next.bind(this))
+            dom.querySelector('.lightbox__prev').addEventListener('click',this.prev.bind(this))
+            return dom;
+        }
+    }
+    
+    Lightbox.init()
+
+};
+
+//effet bouton contactez-moi
+var firstValue;
+var lastValue;
+var emailValue;
+var messageValue;
 
 function launchModal(){
+    
     const modalBg = document.createElement('div');
     modalBg.setAttribute("class","bground");
     sectionPhotographe.appendChild(modalBg);
     const content = document.createElement('div');
     content.setAttribute("class","content");
     modalBg.appendChild(content);
+    if (firstValue == null || firstValue == "" || firstValue == undefined|| lastValue == null || lastValue == "" || lastValue == undefined|| emailValue == null || emailValue == "" || emailValue == undefined|| messageValue == null || messageValue == "" || messageValue == undefined){
     const enteteModal = document.createElement('div');
     enteteModal.setAttribute("class","entete-modal");
     content.appendChild(enteteModal);
-    enteteModal.innerHTML = "<h3 class='titre-modal2'>Contactez-moi</br>"+sourcePers.name+"</h3>";
+    enteteModal.innerHTML = "<h4 class='titre-modal'>Contactez-moi</br>"+sourcePers.name+"</h4>";
     const close = document.createElement('span');
     close.setAttribute("class","close");
     enteteModal.appendChild(close);
@@ -514,14 +639,144 @@ function launchModal(){
     inputMessage.setAttribute("name","message");
     formDataMessage.appendChild(inputMessage);
     const btnEnvoi = document.createElement('button');
-    btnEnvoi.setAttribute("class","button btn__submit btn__contact");
+    btnEnvoi.setAttribute("class","button btn__submit");
     btnEnvoi.setAttribute("type","submit");
     btnEnvoi.setAttribute("value","Envoyer");
     btnEnvoi.innerText="Envoyer";
     formModal.appendChild(btnEnvoi);
+    control();
+    }else{
+      content.innerHTML = "<h4 class='message-modal'>Vous avez déjà envoyé un message à "+sourcePers.name+"</h4><button class='btn-close btn__contact' value='Close'>Close</button>"
+      const closeBtnModal = document.querySelector(".btn-close");
+      closeBtnModal.addEventListener('click',closeModal);
+    }
 }
+
 
 function closeModal() {
     const modalBg = document.querySelector(".bground");
     sectionPhotographe.removeChild(modalBg);
 }
+
+
+function control(){
+const formData = document.querySelectorAll(".formData");
+const textControl = document.querySelectorAll(".text-control");
+
+for( var j = 0; j < textControl.length; j++){
+  textControl[j].setAttribute("data-compteur",j);
+}
+
+for (var i = 0; i < formData.length; i++) {
+    formData[i].addEventListener("change", function(e){
+      var value = e.target.value;
+      var idInput = e.target.id;
+      var nameInput =e.target.name;
+      var iControl = e.target.getAttribute("data-compteur");
+        function testInput(regex, chaine){
+          if (regex.test(chaine)) {
+            formData[iControl].removeAttribute("data-error")
+            formData[iControl].setAttribute("data-error-visible",false);
+            switch (nameInput) {
+              case "first" :
+                firstValue = value;
+                break;
+              case "last" :
+                lastValue = value;
+                break;
+              case "email" :
+                emailValue = value;
+                break;
+              case "message" :
+                messageValue = value;
+                break;
+              }
+          } else {
+            formData[iControl].setAttribute("data-error-visible",true);
+            switch (nameInput) {
+              case "first" :
+                firstValue = "";
+                formData[iControl].setAttribute("data-error","Veuillez entrer un minimum de 2 caractères (Aa-Zz)");
+                break;
+              case "last" :
+                lastValue = "";
+                formData[iControl].setAttribute("data-error","Veuillez entrer un minimum de 2 caractères (Aa-Zz)");
+                break;
+              case "email" :
+                emailValue = "";
+                formData[iControl].setAttribute("data-error","Veuillez renseigner un email valide (***@***.***)");
+                break;
+              case "message" :
+                messageValue = "";
+                formData[iControl].setAttribute("data-error","Veuillez préciser votre demande");
+                break;
+              default :
+                formData[iControl].setAttribute("data-error","cet élément n'est pas renseigné correctement");
+              }
+            }
+        }
+      switch (idInput) {
+      case "first" :
+      case "last" :
+        testInput(/^[A-Za-z -]\D{1,}$/,value);
+        break;
+      case "email" :
+        testInput(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/,value);
+        break;
+      case "message" : 
+        testInput(/^[A-Za-z0-9]{1,}$/,value);
+        break;
+      default:;
+  }})};}
+
+function validate(){
+    const form = document.querySelector("form");
+    const enteteModal = document.querySelector(".entete-modal");
+    const modalBody = document.querySelector(".modal-body");
+    if (firstValue == null || firstValue == "" || firstValue == undefined){
+      document.querySelector('#first').parentNode.setAttribute("data-error-visible",true);
+      document.querySelector('#first').parentNode.setAttribute("data-error","Merci d'indiquer votre prénom");
+      return false;
+    } else if (lastValue == null || lastValue == "" || lastValue == undefined){
+      document.querySelector('#last').parentNode.setAttribute("data-error-visible",true);
+      document.querySelector('#last').parentNode.setAttribute("data-error","Merci d'indiquer votre nom");
+      return false;
+    } else if (emailValue == null || emailValue == "" || emailValue == undefined){
+      document.querySelector('#email').parentNode.setAttribute("data-error-visible",true);
+      document.querySelector('#email').parentNode.setAttribute("data-error","Merci d'indiquer votre email");
+      return false;
+    } else if (messageValue == null || messageValue == "" || messageValue == undefined){
+      document.querySelector('#message').parentNode.setAttribute("data-error-visible",true);
+      document.querySelector('#message').parentNode.setAttribute("data-error","Merci d'indiquer votre message");
+      return false;
+    } else {
+      form.style.display = "none";
+      enteteModal.style.opacity ="0";
+      modalBody.innerHTML = "<h4 class='message-modal'>Merci !<br/><br/>Votre demande a bien été envoyée à "+sourcePers.name+"</h4><button class='btn-close btn__contact' value='Close'>Close</button>"
+      const closeBtnModal = document.querySelector(".btn-close");
+      closeBtnModal.addEventListener('click',closeModal);
+      return true;
+  }};
+
+
+//bouton retour
+var ratio = 0.5;
+var interOptions = {
+    root:null,
+    rootMargin:'0px 0px 0px 0px',
+    threshold: ratio
+}
+
+function interDo(entries, observer){
+    entries.forEach(function(entry){
+        if(entry.intersectionRatio < ratio){
+            retourBtn.style.display="block";
+        }else{
+            retourBtn.style.display="none";
+        }
+    })
+}
+
+var observer = new IntersectionObserver (interDo, interOptions);
+var interTarget = nav;
+observer.observe(interTarget);

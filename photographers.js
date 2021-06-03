@@ -62,7 +62,7 @@ function Photographers(name){
         vignetteLien.setAttribute('onclick',"return pagePhotographer(myJsonParse.photographers["+i+"])");
         var imgPortrait = document.createElement('img');
         imgPortrait.setAttribute("class","vignette__photo");
-        imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/Reduce/" + this.portrait);
+        imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/" + this.portrait);
         vignetteLien.appendChild(imgPortrait);
         var namePers = document.createElement('h2');
         namePers.setAttribute("class","vignette__titre");
@@ -235,7 +235,7 @@ function pagePhotographer(jsonObj){
             vignetPhotographeInfo3.setAttribute("class","vignet__photographe--info vignet__photographe--photo");
                 var imgPortrait = document.createElement('img');
                 imgPortrait.setAttribute("class","vignet__photo");
-                imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/Reduce/" + sourcePers.portrait);
+                imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/" + sourcePers.portrait);
             vignetPhotographeInfo3.appendChild(imgPortrait);
         pagePhotographeInfo.appendChild(vignetPhotographeInfo3);
 
@@ -434,20 +434,20 @@ for(var mediacompteur = 0; mediacompteur<myJsonParse["media"].length; mediacompt
         if (media.video === undefined){
             var imageFactory = new ImageFactory();
             var image = imageFactory.createMedia(media);
-            lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.image);
+            lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+ "/" +media.image);
             var photoMedia = document.createElement('img');
             photoMedia.setAttribute("class","media__photo");
-            photoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.image);
+            photoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + media.image);
             photoMedia.setAttribute("alt",media.title);
             lightboxLien.appendChild(photoMedia)
             medias.appendChild(lightboxLien);        }
         if(media.image === undefined){
             var videoFactory = new VideoFactory();
             var video = videoFactory.createMedia(media);
-            lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.video)
+            lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + media.video)
             var videoMedia = document.createElement('video');
             videoMedia.setAttribute("class","media__photo");
-            videoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.video);
+            videoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + media.video);
             videoMedia.setAttribute("alt",media.title);
             lightboxLien.appendChild(videoMedia)
             medias.appendChild(lightboxLien);        }
@@ -472,7 +472,98 @@ for(var mediacompteur = 0; mediacompteur<myJsonParse["media"].length; mediacompt
         plageMediaMedia.appendChild(medias);
     }
     plageMedia.appendChild(plageMediaMedia)
-}};
+}
+
+class Lightbox{
+    static init(){
+        const links=Array.from(document.querySelectorAll('a[href$=".jpg"], a[href$=".mp4"]'))
+        const gallery = links.map(link => link.getAttribute('href'))
+        links.forEach(link => link.addEventListener('click', e => {
+                e.preventDefault()
+                new Lightbox(e.currentTarget.getAttribute('href'),gallery)
+            }))
+    }
+
+    constructor (url, gallery){
+        this.element = this.buildDOM(url);
+        this.gallery = gallery;
+        this.loadImage(url);
+        this.onKeyUp = this.onKeyUp.bind(this)
+        document.body.appendChild(this.element);
+        document.addEventListener('keyup', this.onKeyUp);
+    }
+    loadImage(url){
+        this.url=null
+        var image;
+        if (url.split('.')[1]==="jpg"){
+        image = document.createElement('img');
+        image.src = url;
+        } else if (url.split('.')[1]==="mp4"){
+        image = document.createElement('video');
+        image.controls = true;
+        image.autoplay = true;
+        image.style.width = "100%";
+        image.setAttribute('name',"media");
+        var imageSrc = document.createElement('source');
+        imageSrc.type="video/mp4";
+        imageSrc.src = url;
+        image.appendChild(imageSrc)
+        }
+        const container = this.element.querySelector('.lightbox__container');
+        container.innerHTML =''
+        this.url=url;
+            container.appendChild(image);
+    }
+onKeyUp (e){
+    if(e.key==='Escape'){
+        this.close(e)
+    }else if(e.key==='ArrowLeft'){
+        this.prev(e)
+    }else if(e.key==='ArrowRight'){
+        this.next(e)
+    }
+}
+    
+close (e){
+    e.preventDefault()
+    this.element.classList.add('fadeOut')
+    window.setTimeout(()=>{
+        this.element.parentElement.removeChild(this.element)
+    }, 500)
+    document.removeEventListener('keyup', this.onKeyUp);
+}
+
+next (e){
+e.preventDefault()
+var i = this.gallery.findIndex(image => image === this.url)
+if (i=== this.gallery.length -1){
+    i = -1
+}
+this.loadImage(this.gallery[i + 1])
+}
+
+prev (e){
+e.preventDefault()
+var i = this.gallery.findIndex(image => image === this.url)
+if (i=== 0){
+    i = this.gallery.length
+}
+this.loadImage(this.gallery[i - 1])
+}
+
+    buildDOM(url){
+        const dom = document.createElement('div');
+        dom.classList.add('lightbox');
+        dom.innerHTML = '<button class="lightbox__close">Fermer</button><button class="lightbox__next">Suivant</button><button class="lightbox__prev">Précédent</button><div class="lightbox__container"></div>';
+        dom.querySelector('.lightbox__close').addEventListener('click',this.close.bind(this))
+        dom.querySelector('.lightbox__next').addEventListener('click',this.next.bind(this))
+        dom.querySelector('.lightbox__prev').addEventListener('click',this.prev.bind(this))
+        return dom;
+    }
+}
+
+Lightbox.init()
+};
 
 //effet bouton contactez-moi
 var firstValue;
