@@ -20,7 +20,29 @@ const section = document.querySelector('#section');
 const sectionPhotographe = document.querySelector('#sectionPhotographe');
 const nav = document.querySelector('.nav');
 const h1 = document.querySelector('h1');
+const retourBtn = document.querySelector('.retour');
 
+//bouton retour
+var ratio = 0.5;
+var interOptions = {
+    root:null,
+    rootMargin:'0px 0px 0px 0px',
+    threshold: ratio
+}
+
+function interDo(entries, observer){
+    entries.forEach(function(entry){
+        if(entry.intersectionRatio < ratio){
+            retourBtn.style.display="block";
+        }else{
+            retourBtn.style.display="none";
+        }
+    })
+}
+
+var observer = new IntersectionObserver (interDo, interOptions);
+var interTarget = nav;
+observer.observe(interTarget);
 //constructeur vignette Photographers
 function Photographers(name){
     this.name = name;
@@ -160,6 +182,7 @@ function pagePhotographer(jsonObj){
     };
     nav.style.display = "none";
     h1.style.display = "none";
+    retourBtn.style.display='none';
     totalLike = 0;
     var pagePhotographe = document.createElement('article');
     pagePhotographe.setAttribute("class","page__photographe");
@@ -228,7 +251,7 @@ function pagePhotographer(jsonObj){
         triSelect.setAttribute("id","triSelect");
         const triOptionDefault = document.createElement('option');
         triOptionDefault.setAttribute("value","");
-        triOptionDefault.textContent = "--choisir une option de tri--";
+        triOptionDefault.textContent = "--choisir un tri--";
         const triOptionDate = document.createElement('option');
         triOptionDate.setAttribute("value","date");
         triOptionDate.textContent = "Date";
@@ -405,25 +428,28 @@ for(var mediacompteur = 0; mediacompteur<myJsonParse["media"].length; mediacompt
     var media=myJsonParse["media"][mediacompteur];
     var medias = document.createElement('div');
     medias.setAttribute('class','mediasInside');
+    var lightboxLien = document.createElement('a');
     if(media.photographerId===sourcePers.id){
         if (media.video === undefined){
             var imageFactory = new ImageFactory();
             var image = imageFactory.createMedia(media);
+            lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.image);
             var photoMedia = document.createElement('img');
             photoMedia.setAttribute("class","media__photo");
             photoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.image);
             photoMedia.setAttribute("alt",media.title);
-            medias.appendChild(photoMedia);
-        }
+            lightboxLien.appendChild(photoMedia)
+            medias.appendChild(lightboxLien);        }
         if(media.image === undefined){
             var videoFactory = new VideoFactory();
             var video = videoFactory.createMedia(media);
+            lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.video)
             var videoMedia = document.createElement('video');
             videoMedia.setAttribute("class","media__photo");
             videoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.video);
             videoMedia.setAttribute("alt",media.title);
-            medias.appendChild(videoMedia);
-        }
+            lightboxLien.appendChild(videoMedia)
+            medias.appendChild(lightboxLien);        }
         var legendMedia = document.createElement('div');
         legendMedia.setAttribute("class","media__legend");
         var titreMedia = document.createElement('h3');
