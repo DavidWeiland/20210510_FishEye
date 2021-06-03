@@ -229,6 +229,7 @@ function pagePhotographer(jsonObj){
                 btnContact.setAttribute("value","Contactez-moi");
                 btnContact.innerText="Contactez-moi";
             vignetPhotographeInfo2.appendChild(btnContact);
+            btnContact.addEventListener("click",launchModal);
         pagePhotographeInfo.appendChild(vignetPhotographeInfo2);
             var vignetPhotographeInfo3 = document.createElement('div');
             vignetPhotographeInfo3.setAttribute("class","vignet__photographe--info vignet__photographe--photo");
@@ -472,3 +473,196 @@ for(var mediacompteur = 0; mediacompteur<myJsonParse["media"].length; mediacompt
     }
     plageMedia.appendChild(plageMediaMedia)
 }};
+
+//effet bouton contactez-moi
+var firstValue;
+var lastValue;
+var emailValue;
+var messageValue;
+
+function launchModal(){
+    
+    const modalBg = document.createElement('div');
+    modalBg.setAttribute("class","bground");
+    sectionPhotographe.appendChild(modalBg);
+    const content = document.createElement('div');
+    content.setAttribute("class","content");
+    modalBg.appendChild(content);
+    if (firstValue == null || firstValue == "" || firstValue == undefined|| lastValue == null || lastValue == "" || lastValue == undefined|| emailValue == null || emailValue == "" || emailValue == undefined|| messageValue == null || messageValue == "" || messageValue == undefined){
+    const enteteModal = document.createElement('div');
+    enteteModal.setAttribute("class","entete-modal");
+    content.appendChild(enteteModal);
+    enteteModal.innerHTML = "<h4 class='titre-modal'>Contactez-moi</br>"+sourcePers.name+"</h4>";
+    const close = document.createElement('span');
+    close.setAttribute("class","close");
+    enteteModal.appendChild(close);
+    const closeBtn = document.querySelectorAll(".close");
+    closeBtn.forEach((btnClose) => btnClose.addEventListener("click", closeModal));
+    const modalBody = document.createElement('div');
+    modalBody.setAttribute("class","modal-body");
+    content.appendChild(modalBody);
+    const formModal = document.createElement('form');
+    formModal.setAttribute("name","contact");
+    formModal.setAttribute("action","index.html");
+    formModal.setAttribute("method","POST");
+    formModal.setAttribute("onsubmit","return validate()");
+    modalBody.appendChild(formModal);
+    const formDataPrenom = document.createElement('div');
+    formDataPrenom.setAttribute("class","formData");
+    formModal.appendChild(formDataPrenom);
+    formDataPrenom.innerHTML = "<label for='first'>Prénom</label></br>";
+    const inputPrenom = document.createElement('input');
+    inputPrenom.setAttribute("class","text-control");
+    inputPrenom.setAttribute("type","text");
+    inputPrenom.setAttribute("id","first");
+    inputPrenom.setAttribute("name","first");
+    formDataPrenom.appendChild(inputPrenom);
+    const formDataNom = document.createElement('div');
+    formDataNom.setAttribute("class","formData");
+    formModal.appendChild(formDataNom);
+    formDataNom.innerHTML = "<label for='last'>Nom</label></br>";
+    const inputNom = document.createElement('input');
+    inputNom.setAttribute("class","text-control");
+    inputNom.setAttribute("type","text");
+    inputNom.setAttribute("id","last");
+    inputNom.setAttribute("name","last");
+    formDataNom.appendChild(inputNom);
+    const formDataMail = document.createElement('div');
+    formDataMail.setAttribute("class","formData");
+    formModal.appendChild(formDataMail);
+    formDataMail.innerHTML = "<label for='email'>Email</label></br>";
+    const inputMail = document.createElement('input');
+    inputMail.setAttribute("class","text-control");
+    inputMail.setAttribute("type","email");
+    inputMail.setAttribute("id","email");
+    inputMail.setAttribute("name","email");
+    formDataMail.appendChild(inputMail);
+    const formDataMessage = document.createElement('div');
+    formDataMessage.setAttribute("class","formData");
+    formModal.appendChild(formDataMessage);
+    formDataMessage.innerHTML = "<label for='message'>Votre Message</label></br>";
+    const inputMessage = document.createElement('textarea');
+    inputMessage.setAttribute("class","text-control");
+    inputMessage.setAttribute("rows","4");
+    inputMessage.setAttribute("id","message");
+    inputMessage.setAttribute("name","message");
+    formDataMessage.appendChild(inputMessage);
+    const btnEnvoi = document.createElement('button');
+    btnEnvoi.setAttribute("class","button btn__submit");
+    btnEnvoi.setAttribute("type","submit");
+    btnEnvoi.setAttribute("value","Envoyer");
+    btnEnvoi.innerText="Envoyer";
+    formModal.appendChild(btnEnvoi);
+    control();
+    }else{
+      content.innerHTML = "<h4 class='message-modal'>Vous avez déjà envoyé un message à "+sourcePers.name+"</h4><button class='btn-close btn__contact' value='Close'>Close</button>"
+      const closeBtnModal = document.querySelector(".btn-close");
+      closeBtnModal.addEventListener('click',closeModal);
+    }
+}
+
+
+function closeModal() {
+    const modalBg = document.querySelector(".bground");
+    sectionPhotographe.removeChild(modalBg);
+}
+
+
+function control(){
+const formData = document.querySelectorAll(".formData");
+const textControl = document.querySelectorAll(".text-control");
+
+for( var j = 0; j < textControl.length; j++){
+  textControl[j].setAttribute("data-compteur",j);
+}
+
+for (var i = 0; i < formData.length; i++) {
+    formData[i].addEventListener("change", function(e){
+      var value = e.target.value;
+      var idInput = e.target.id;
+      var nameInput =e.target.name;
+      var iControl = e.target.getAttribute("data-compteur");
+        function testInput(regex, chaine){
+          if (regex.test(chaine)) {
+            formData[iControl].removeAttribute("data-error")
+            formData[iControl].setAttribute("data-error-visible",false);
+            switch (nameInput) {
+              case "first" :
+                firstValue = value;
+                break;
+              case "last" :
+                lastValue = value;
+                break;
+              case "email" :
+                emailValue = value;
+                break;
+              case "message" :
+                messageValue = value;
+                break;
+              }
+          } else {
+            formData[iControl].setAttribute("data-error-visible",true);
+            switch (nameInput) {
+              case "first" :
+                firstValue = "";
+                formData[iControl].setAttribute("data-error","Veuillez entrer un minimum de 2 caractères (Aa-Zz)");
+                break;
+              case "last" :
+                lastValue = "";
+                formData[iControl].setAttribute("data-error","Veuillez entrer un minimum de 2 caractères (Aa-Zz)");
+                break;
+              case "email" :
+                emailValue = "";
+                formData[iControl].setAttribute("data-error","Veuillez renseigner un email valide (***@***.***)");
+                break;
+              case "message" :
+                messageValue = "";
+                formData[iControl].setAttribute("data-error","Veuillez préciser votre demande");
+                break;
+              default :
+                formData[iControl].setAttribute("data-error","cet élément n'est pas renseigné correctement");
+              }
+            }
+        }
+      switch (idInput) {
+      case "first" :
+      case "last" :
+        testInput(/^[A-Za-z -]\D{1,}$/,value);
+        break;
+      case "email" :
+        testInput(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/,value);
+        break;
+      case "message" : 
+        testInput(/^[A-Za-z0-9]{1,}$/,value);
+        break;
+      default:;
+  }})};}
+
+function validate(){
+    const form = document.querySelector("form");
+    const enteteModal = document.querySelector(".entete-modal");
+    const modalBody = document.querySelector(".modal-body");
+    if (firstValue == null || firstValue == "" || firstValue == undefined){
+      document.querySelector('#first').parentNode.setAttribute("data-error-visible",true);
+      document.querySelector('#first').parentNode.setAttribute("data-error","Merci d'indiquer votre prénom");
+      return false;
+    } else if (lastValue == null || lastValue == "" || lastValue == undefined){
+      document.querySelector('#last').parentNode.setAttribute("data-error-visible",true);
+      document.querySelector('#last').parentNode.setAttribute("data-error","Merci d'indiquer votre nom");
+      return false;
+    } else if (emailValue == null || emailValue == "" || emailValue == undefined){
+      document.querySelector('#email').parentNode.setAttribute("data-error-visible",true);
+      document.querySelector('#email').parentNode.setAttribute("data-error","Merci d'indiquer votre email");
+      return false;
+    } else if (messageValue == null || messageValue == "" || messageValue == undefined){
+      document.querySelector('#message').parentNode.setAttribute("data-error-visible",true);
+      document.querySelector('#message').parentNode.setAttribute("data-error","Merci d'indiquer votre message");
+      return false;
+    } else {
+      form.style.display = "none";
+      enteteModal.style.opacity ="0";
+      modalBody.innerHTML = "<h4 class='message-modal'>Merci !<br/><br/>Votre demande a bien été envoyée à "+sourcePers.name+"</h4><button class='btn-close btn__contact' value='Close'>Close</button>"
+      const closeBtnModal = document.querySelector(".btn-close");
+      closeBtnModal.addEventListener('click',closeModal);
+      return true;
+  }};
