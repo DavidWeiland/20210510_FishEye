@@ -58,7 +58,7 @@ function Photographers(name){
         var tags = this.tags;
         var vignette = document.createElement('article');
         var vignetteLien = document.createElement('a');
-        vignetteLien.setAttribute('href','#' + this.id);
+        //vignetteLien.setAttribute('href','#' + this.id);
         vignetteLien.setAttribute('class',"vignette");
         vignetteLien.setAttribute('onclick',"return pagePhotographer(myJsonParse.photographers["+i+"])");
         var imgPortrait = document.createElement('img');
@@ -88,7 +88,6 @@ function Photographers(name){
             var inputItem = document.createElement('input');
                 inputItem.setAttribute("class","input__option");
                 inputItem.setAttribute("type","checkbox");
-                //inputItem.setAttribute("id",tags[j]);
                 inputItem.setAttribute("name","option");
                 inputItem.setAttribute("value",tags[j]);
             var labelItem = document.createElement('label');
@@ -179,7 +178,9 @@ function construction(myJsonObj){
 
 var sourcePers;
 var totalLike;
-
+//préparation lightbox
+var tableauLiens =[];
+var index;
 //construction pages photographe
 function pagePhotographer(jsonObj){
     sourcePers = jsonObj;
@@ -339,6 +340,7 @@ function pagePhotographer(jsonObj){
             while (plageMedia.firstChild){
                 plageMedia.removeChild(plageMedia.firstChild);
             }
+            tableauLiens = [];
             plancheImage();
         });
     }
@@ -435,6 +437,7 @@ function plancheImage(){
                 var imageFactory = new ImageFactory();
                 var image = imageFactory.createMedia(media);
                 lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+ "/" +media.image);
+                lightboxLien.setAttribute('class','lien__media');
                 var photoMedia = document.createElement('img');
                 photoMedia.setAttribute("class","media__photo");
                 photoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + media.image);
@@ -445,6 +448,7 @@ function plancheImage(){
                 var videoFactory = new VideoFactory();
                 var video = videoFactory.createMedia(media);
                 lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + media.video)
+                lightboxLien.setAttribute('class','lien__media');
                 var videoMedia = document.createElement('video');
                 videoMedia.setAttribute("class","media__photo");
                 videoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + media.video);
@@ -452,6 +456,7 @@ function plancheImage(){
                 lightboxLien.appendChild(videoMedia)
                 medias.appendChild(lightboxLien);
             }
+            tableauLiens.push(lightboxLien.getAttribute('href'))
             var legendMedia = document.createElement('div');
             legendMedia.setAttribute("class","media__legend");
             var titreMedia = document.createElement('h3');
@@ -474,89 +479,75 @@ function plancheImage(){
         }
         plageMedia.appendChild(plageMediaMedia)
     }
-    class Lightbox{
-        static init(){
-            const links=Array.from(document.querySelectorAll('a[href$=".jpg"], a[href$=".mp4"]'))
-            const gallery = links.map(link => link.getAttribute('href'))
-            links.forEach(link => link.addEventListener('click', e => {
-                e.preventDefault()
-                new Lightbox(e.currentTarget.getAttribute('href'),gallery)
-            }))
-        }
-        constructor (url, gallery){
-            this.element = this.buildDOM(url);
-            this.gallery = gallery;
-            this.loadImage(url);
-            this.onKeyUp = this.onKeyUp.bind(this)
-            document.body.appendChild(this.element);
-            document.addEventListener('keyup', this.onKeyUp);
-        }
-        loadImage(url){
-            this.url=null
-            var image;
-            if (url.split('.')[1]==="jpg"){
-                image = document.createElement('img');
-                image.src = url;
-            } else if (url.split('.')[1]==="mp4"){
-                image = document.createElement('video');
-                image.controls = true;
-                image.autoplay = true;
-                image.style.width = "100%";
-                image.setAttribute('name',"media");
-                var imageSrc = document.createElement('source');
-                imageSrc.type="video/mp4";
-                imageSrc.src = url;
-                image.appendChild(imageSrc)
-            }
-            const container = this.element.querySelector('.lightbox__container');
-            container.innerHTML =''
-            this.url=url;
-            container.appendChild(image);
-        }
-        onKeyUp (e){
-            if(e.key==='Escape'){
-                this.close(e)
-            }else if(e.key==='ArrowLeft'){
-                this.prev(e)
-            }else if(e.key==='ArrowRight'){
-                this.next(e)
-            }
-        }
-        close (e){
-            e.preventDefault()
-            this.element.classList.add('fadeOut')
-            window.setTimeout(()=>{
-                this.element.parentElement.removeChild(this.element)
-            }, 500)
-            document.removeEventListener('keyup', this.onKeyUp);
-        }
-        next (e){
-            e.preventDefault()
-            var i = this.gallery.findIndex(image => image === this.url)
-            if (i=== this.gallery.length -1){
-                i = -1
-            }
-            this.loadImage(this.gallery[i + 1])
-        }
-        prev (e){
-            e.preventDefault()
-            var i = this.gallery.findIndex(image => image === this.url)
-            if (i=== 0){
-                i = this.gallery.length
-            }
-            this.loadImage(this.gallery[i - 1])
-        }
-        buildDOM(url){
-            const dom = document.createElement('div');
-            dom.classList.add('lightbox');
-            dom.innerHTML = '<button class="lightbox__close">Fermer</button><button class="lightbox__next">Suivant</button><button class="lightbox__prev">Précédent</button><div class="lightbox__container"></div>';
-            dom.querySelector('.lightbox__close').addEventListener('click',this.close.bind(this))
-            dom.querySelector('.lightbox__next').addEventListener('click',this.next.bind(this))
-            dom.querySelector('.lightbox__prev').addEventListener('click',this.prev.bind(this))
-            return dom;
-        }
+    const links = document.querySelectorAll('.lien__media');
+    for(var j=0;j<links.length;j++){
+        links[j].removeAttribute('href');
+        links[j].setAttribute('onclick', 'return lightbox(tableauLiens['+j+'])')
     }
-    Lightbox.init()
+};
+
+var sourceLightbox;
+
+function lightbox(jsonObj){
+    sourceLightbox = jsonObj;
+    index = tableauLiens.findIndex(lien => lien === sourceLightbox)
+    var image;
+    const lightboxDiv= document.createElement('div');
+    lightboxDiv.classList.add('lightbox');
+    sectionPhotographe.appendChild(lightboxDiv);
+    const lightboxClose= document.createElement('button');
+    lightboxClose.classList.add('lightbox__close');
+    lightboxDiv.appendChild(lightboxClose);
+    const lightboxNext= document.createElement('button');
+    lightboxNext.classList.add('lightbox__next');
+    lightboxDiv.appendChild(lightboxNext);
+    const lightboxPrev= document.createElement('button');
+    lightboxPrev.classList.add('lightbox__prev');
+    lightboxDiv.appendChild(lightboxPrev);
+    const container= document.createElement('div');
+    container.classList.add('lightbox__container');
+    lightboxDiv.appendChild(container);
+    loadImage();
+    function loadImage(){
+        if (sourceLightbox.split('.')[1]==="jpg"){
+            image = document.createElement('img');
+            image.src = sourceLightbox;
+        } else if (sourceLightbox.split('.')[1]==="mp4"){
+            image = document.createElement('video');
+            image.controls = true;
+            image.autoplay = true;
+            image.style.width = "100%";
+            image.setAttribute('name',"media");
+            var imageSrc = document.createElement('source');
+            imageSrc.type="video/mp4";
+            imageSrc.src = sourceLightbox;
+            image.appendChild(imageSrc)
+        }
+        container.innerHTML='';
+        container.appendChild(image);
+    }
+    lightboxClose.addEventListener('click', function closeLightbox(e){
+        e.preventDefault();
+        sectionPhotographe.removeChild(lightboxDiv);
+    })
+    lightboxNext.addEventListener('click',function nextLightbox (e){
+        e.preventDefault()
+        if (index === tableauLiens.length -1){
+            index = -1
+        }
+        index++
+        sourceLightbox = tableauLiens[index]
+        loadImage()
+    })
+    lightboxPrev.addEventListener('click', function prevLightbox(e){
+        e.preventDefault();
+        if (index === 0){
+            index = tableauLiens.length
+        }
+        index--
+        sourceLightbox = tableauLiens[index]
+        loadImage()
+    })
 };
 
 //effet bouton contactez-moi
