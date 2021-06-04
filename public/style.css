@@ -762,19 +762,35 @@ label {
     right: 20px;
     z-index:12;
 }
-.lightbox__container img,
-.lightbox__container video{
+.lightbox__container--element img,
+.lightbox__container--element video{
     max-width: 100%;
     max-height: 90vh;
     animation: lightboxIn 1s;
 }
+
+.lightbox__container h4{
+    margin:0;
+    font-size: 30px;
+    max-height: 10vh;
+}
+
 .lightbox__container{
     margin-left: 110px;
     margin-right: 110px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+}
+.lightbox__container--element{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    max-height: 100vh;
+    width: auto;
 }
 
 @keyframes lightboxIn{

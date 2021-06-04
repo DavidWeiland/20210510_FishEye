@@ -63,7 +63,7 @@ function Photographers(name){
         vignetteLien.setAttribute('onclick',"return pagePhotographer(myJsonParse.photographers["+i+"])");
         var imgPortrait = document.createElement('img');
         imgPortrait.setAttribute("class","vignette__photo");
-        imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/" + this.portrait);
+        imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/Resized/" + this.portrait);
         vignetteLien.appendChild(imgPortrait);
         var namePers = document.createElement('h2');
         namePers.setAttribute("class","vignette__titre");
@@ -177,9 +177,14 @@ function construction(myJsonObj){
 }
 
 var sourcePers;
+var likeMedia;
+var likeMediaCount;
 var totalLike;
+var increLike;
 //préparation lightbox
 var tableauLiens =[];
+var tableauTitres = [];
+var tableauLikes = [];
 var index;
 //construction pages photographe
 function pagePhotographer(jsonObj){
@@ -191,7 +196,6 @@ function pagePhotographer(jsonObj){
     nav.style.display = "none";
     h1.style.display = "none";
     retourBtn.style.display='none';
-    totalLike = 0;
     var pagePhotographe = document.createElement('article');
     pagePhotographe.setAttribute("class","page__photographe");
     var pagePhotographeInfo = document.createElement('div');
@@ -203,9 +207,6 @@ function pagePhotographer(jsonObj){
     var plageMedia = document.createElement('article');
     plageMedia.setAttribute("class","plage__media");
     sectionPhotographe.appendChild(plageMedia);
-    var mediaBottom = document.createElement('div');
-    mediaBottom.setAttribute("class","media__bottom");
-    sectionPhotographe.appendChild(mediaBottom);
 //Header Photographer
     var vignetPhotographeInfo1 = document.createElement('div');
     vignetPhotographeInfo1.setAttribute("class","vignet__photographe--info vignet__photographe--label");
@@ -242,7 +243,7 @@ function pagePhotographer(jsonObj){
     vignetPhotographeInfo3.setAttribute("class","vignet__photographe--info vignet__photographe--photo");
     var imgPortrait = document.createElement('img');
     imgPortrait.setAttribute("class","vignet__photo");
-    imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/" + sourcePers.portrait);
+    imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/Resized/" + sourcePers.portrait);
     vignetPhotographeInfo3.appendChild(imgPortrait);
     pagePhotographeInfo.appendChild(vignetPhotographeInfo3);
 //bouton de tri (base)
@@ -341,6 +342,8 @@ function pagePhotographer(jsonObj){
                 plageMedia.removeChild(plageMedia.firstChild);
             }
             tableauLiens = [];
+            tableauTitres = [];
+            tableauLikes = [];
             plancheImage();
         });
     }
@@ -364,25 +367,10 @@ function pagePhotographer(jsonObj){
     document.addEventListener("click", closeAllSelect);
 //planche medias
     plancheImage()
-//creation footer media
-    var likeBottom = document.createElement('div');
-    likeBottom.setAttribute("class","like__bottom");
-    var likeTotal = document.createElement('p');    
-    likeTotal.textContent = totalLike;
-    likeBottom.appendChild(likeTotal)
-    var heart = document.createElement('i');
-    heart.setAttribute("class","fas fa-heart");
-    likeBottom.appendChild(heart)
-    mediaBottom.appendChild(likeBottom);
-    var pricePers = document.createElement('p');
-    pricePers.setAttribute("class","media__price");
-    pricePers.textContent = sourcePers.price + '€/jour';
-    mediaBottom.appendChild(pricePers);
 };
 
 var triValue="";
 
-//à placer en début de JS avec class Photographers
 function Image(options){
     this.id = options.id;
     this.photographerId = options.photographerId;
@@ -422,12 +410,20 @@ ImageFactory.prototype.createMedia = function(options){
 function VideoFactory(){}
 VideoFactory.prototype = new ImageFactory();
 VideoFactory.prototype.mediaClass=Video;
-
+var mediacompteur;
 function plancheImage(){
+    totalLike=0;
+if (tableauLikes.length===0){
+    for(var many = 0; many<myJsonParse["media"].length; many++){
+        var media=myJsonParse["media"][many];
+        tableauLikes.push(media.likes);
+    }
+}
     var plageMedia = document.querySelector('.plage__media');
+    plageMedia.innerHTML='';
     var plageMediaMedia = document.createElement('div');
     plageMediaMedia.setAttribute('class','medias');
-    for(var mediacompteur = 0; mediacompteur<myJsonParse["media"].length; mediacompteur++){
+    for(mediacompteur = 0; mediacompteur<myJsonParse["media"].length; mediacompteur++){
         var media=myJsonParse["media"][mediacompteur];
         var medias = document.createElement('div');
         medias.setAttribute('class','mediasInside');
@@ -436,11 +432,11 @@ function plancheImage(){
             if (media.video === undefined){
                 var imageFactory = new ImageFactory();
                 var image = imageFactory.createMedia(media);
-                lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+ "/" +media.image);
+                lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+ "/Resized/" +media.image);
                 lightboxLien.setAttribute('class','lien__media');
                 var photoMedia = document.createElement('img');
                 photoMedia.setAttribute("class","media__photo");
-                photoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + media.image);
+                photoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/Resized/" + media.image);
                 photoMedia.setAttribute("alt",media.title);
                 lightboxLien.appendChild(photoMedia)
                 medias.appendChild(lightboxLien);
@@ -462,16 +458,17 @@ function plancheImage(){
             var titreMedia = document.createElement('h3');
             titreMedia.setAttribute("class","media__titre");
             titreMedia.textContent = media.title;
+            tableauTitres.push(media.title);
             legendMedia.appendChild(titreMedia);
-            var likeMedia=document.createElement('div');
+            likeMedia=document.createElement('div');
             likeMedia.setAttribute("class","media__like");
-            var likeMediaCount = document.createElement('p');
+            likeMediaCount = document.createElement('p');
             likeMediaCount.setAttribute("class","media__like");
-            likeMediaCount.textContent = media.likes;
-            totalLike = totalLike + media.likes;
             var heart = document.createElement('i');
             heart.setAttribute("class","fas fa-heart");
-            likeMedia.appendChild(likeMediaCount);
+            heart.setAttribute('data-compteur',mediacompteur);
+            plusLikes(tableauLikes[mediacompteur])
+            totalLike = totalLike + tableauLikes[mediacompteur];
             likeMedia.appendChild(heart);
             legendMedia.appendChild(likeMedia);
             medias.appendChild(legendMedia);
@@ -479,12 +476,50 @@ function plancheImage(){
         }
         plageMedia.appendChild(plageMediaMedia)
     }
+//creation footer media
+    var mediaBottom = document.createElement('div');
+    mediaBottom.setAttribute("class","media__bottom");
+    sectionPhotographe.appendChild(mediaBottom);
+    var likeBottom = document.createElement('div');
+    likeBottom.setAttribute("class","like__bottom");
+    var likeTotal = document.createElement('p');    
+    likeTotal.textContent = totalLike;
+    likeBottom.appendChild(likeTotal)
+    var heart = document.createElement('i');
+    heart.setAttribute("class","fas fa-heart");
+    likeBottom.appendChild(heart)
+    mediaBottom.appendChild(likeBottom);
+    var pricePers = document.createElement('p');
+    pricePers.setAttribute("class","media__price");
+    pricePers.textContent = sourcePers.price + '€/jour';
+    mediaBottom.appendChild(pricePers);
     const links = document.querySelectorAll('.lien__media');
     for(var j=0;j<links.length;j++){
         links[j].removeAttribute('href');
         links[j].setAttribute('onclick', 'return lightbox(tableauLiens['+j+'])')
     }
+    const hearts = document.querySelectorAll('.fa-heart');
+    for(var j=0;j<hearts.length;j++){
+        hearts[j].addEventListener('click', function incrementationLikes(e){
+            likeIndice = e.target.getAttribute('data-compteur');
+            tableauLikes[likeIndice]++;
+            mediacompteur=likeIndice;
+            likeMedia.removeChild(likeMediaCount)
+            likeMediaCount = document.createElement('p');
+            likeMediaCount.setAttribute("class","media__like");
+            likeMediaCount.textContent=''
+            sourceLikes = tableauLikes[likeIndice]
+            plancheImage(sourceLikes)
+    })}
 };
+
+var sourceLikes;
+var indexLikes;
+function plusLikes(jsonObj){
+    sourceLikes = jsonObj;
+    likeMediaCount.textContent = sourceLikes;
+    likeMedia.appendChild(likeMediaCount);
+}
 
 var sourceLightbox;
 
@@ -492,6 +527,7 @@ function lightbox(jsonObj){
     sourceLightbox = jsonObj;
     index = tableauLiens.findIndex(lien => lien === sourceLightbox)
     var image;
+    var titre;
     const lightboxDiv= document.createElement('div');
     lightboxDiv.classList.add('lightbox');
     sectionPhotographe.appendChild(lightboxDiv);
@@ -507,6 +543,9 @@ function lightbox(jsonObj){
     const container= document.createElement('div');
     container.classList.add('lightbox__container');
     lightboxDiv.appendChild(container);
+    const containerElement= document.createElement('div');
+    containerElement.classList.add('lightbox__container--element');
+    
     loadImage();
     function loadImage(){
         if (sourceLightbox.split('.')[1]==="jpg"){
@@ -523,8 +562,13 @@ function lightbox(jsonObj){
             imageSrc.src = sourceLightbox;
             image.appendChild(imageSrc)
         }
+        titre = document.createElement('h4');
+        titre.textContent = tableauTitres[index]
         container.innerHTML='';
-        container.appendChild(image);
+        containerElement.innerHTML='';
+        containerElement.appendChild(image);
+        containerElement.appendChild(titre);
+        container.appendChild(containerElement)
     }
     lightboxClose.addEventListener('click', function closeLightbox(e){
         e.preventDefault();
@@ -704,7 +748,7 @@ function control(){
                     testInput(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/,value);
                     break;
                 case "message" : 
-                    testInput(/^[A-Za-z0-9]{1,}$/,value);
+                    testInput(/^[a-zA-Z0-9 -_'.!,?:=$€]{1,}$/,value);
                     break;
                 default:;
             }
@@ -736,8 +780,38 @@ function validate(){
         form.style.display = "none";
         enteteModal.style.opacity ="0";
         modalBody.innerHTML = "<h4 class='message-modal'>Merci !<br/><br/>Votre demande a bien été envoyée à "+sourcePers.name+"</h4><button class='btn-close btn__contact' value='Close'>Close</button>"
+        constructionForm()
         const closeBtnModal = document.querySelector(".btn-close");
         closeBtnModal.addEventListener('click',closeModal);
         return true;
     }
 };
+
+var envoiForm=[]
+
+function ValueForm(recever){
+    this.recever = recever;
+    this.first = "first";
+    this.last = "last";
+    this.email = "email";
+    this.message = "message";
+    this.getInfo = function(){
+        var valueForm =[];
+        valueForm.push(this.recever);
+        valueForm.push(this.first);
+        valueForm.push(this.last);
+        valueForm.push(this.email);
+        valueForm.push(this.message);
+        envoiForm.push(valueForm);
+        console.log(JSON.stringify(envoiForm));
+    };
+};
+
+function constructionForm(){
+    var myFormulaire = new ValueForm(sourcePers.id);
+    myFormulaire.first = firstValue;
+    myFormulaire.last = lastValue;
+    myFormulaire.email = emailValue;
+    myFormulaire.message = messageValue;
+    myFormulaire.getInfo();
+}
