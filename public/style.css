@@ -736,7 +736,7 @@ label {
 .lightbox__next,
 .lightbox__prev{
     border : none;
-    background: url(./Images/Icones/chevron-right.svg) center center / 70px 70px no-repeat;
+    background: url(../Images/Icones/chevron-right.svg) center center / 70px 70px no-repeat;
     width: 110px;
     height: 100%;
     top : 0;
@@ -755,7 +755,7 @@ label {
     opacity :1;
 }
 .lightbox__close{
-    background: url(./Images/Icones/times.svg) center center / 100% 100% no-repeat;
+    background: url(../Images/Icones/times.svg) center center / 100% 100% no-repeat;
     width: 70px;
     height: 70px;
     top : 20px;
