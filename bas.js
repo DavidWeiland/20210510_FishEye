@@ -22,6 +22,28 @@ const nav = document.querySelector('.nav');
 const h1 = document.querySelector('h1');
 const retourBtn = document.querySelector('.retour');
 
+//bouton retour
+var ratio = 0.5;
+var interOptions = {
+    root:null,
+    rootMargin:'0px 0px 0px 0px',
+    threshold: ratio
+}
+
+function interDo(entries, observer){
+    entries.forEach(function(entry){
+        if(entry.intersectionRatio < ratio){
+            retourBtn.style.display="block";
+        }else{
+            retourBtn.style.display="none";
+        }
+    })
+}
+
+var observer = new IntersectionObserver (interDo, interOptions);
+var interTarget = nav;
+observer.observe(interTarget);
+
 //constructeur vignette Photographers
 function Photographers(name){
     this.name = name;
@@ -41,7 +63,7 @@ function Photographers(name){
         vignetteLien.setAttribute('onclick',"return pagePhotographer(myJsonParse.photographers["+i+"])");
         var imgPortrait = document.createElement('img');
         imgPortrait.setAttribute("class","vignette__photo");
-        imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/Reduce/" + this.portrait);
+        imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/" + this.portrait);
         vignetteLien.appendChild(imgPortrait);
         var namePers = document.createElement('h2');
         namePers.setAttribute("class","vignette__titre");
@@ -82,7 +104,8 @@ function Photographers(name){
         vignette.appendChild(vignetteLien);
         vignette.appendChild(tagPers);
         section.appendChild(vignette);
-    }}
+    }
+}
 
 vignetPhotographers(myJsonParse);
 
@@ -90,9 +113,10 @@ var i ; //var de boucle commune
 
 function vignetPhotographers(jsonObj){
     var sourceJson = jsonObj["photographers"];
-for ( i = 0; i < sourceJson.length; i++){
+    for ( i = 0; i < sourceJson.length; i++){
     construction(sourceJson);
-}}
+    }
+}
 
 //écouteur sélection spécialité des photographers
 const option = document.querySelectorAll("input[type=checkbox]");
@@ -103,39 +127,43 @@ for ( var cbx =0; cbx<option.length; cbx++) {
         for(var cbx2 = 0; cbx2<option.length;cbx2++){
             if (option[cbx2].getAttribute("checked")){
             option[cbx2].setAttribute("checked",false);
+            }
+            if(!checkedVerif){
+                eventOption.target.setAttribute("checked",true);
+                optionValue=eventOption.target.value;
+                while (section.firstChild){
+                    section.removeChild(section.firstChild);
+                };
+                vignetPhotographersSelected(myJsonParse);
+            } else {
+                eventOption.target.removeAttribute("checked",false);
+                optionValue="";
+                while (section.firstChild){
+                    section.removeChild(section.firstChild);
+                };
+                vignetPhotographers(myJsonParse);
+            }
         }
-        if(!checkedVerif){
-            eventOption.target.setAttribute("checked",true);
-            optionValue=eventOption.target.value;
-            while (section.firstChild){
-                section.removeChild(section.firstChild);
-            };
-            vignetPhotographersSelected(myJsonParse);
-        } else {
-            eventOption.target.removeAttribute("checked",false);
-            optionValue="";
-            
-            while (section.firstChild){
-                section.removeChild(section.firstChild);
-            };
-            vignetPhotographers(myJsonParse);
-}}})};
-
+    })
+};
 
 function vignetPhotographersSelected (jsonObj){
     var sourceJsonSelect = jsonObj["photographers"];
-for (i = 0; i < sourceJsonSelect.length; i++) {
-    var tags = sourceJsonSelect[i].tags;
-    //boucle sur spécialité
-    for (var k = 0; k < tags.length; k++) {
-        //correction faute d'orthographe
-        if (tags[k] ==="sports") {
-            tags[k] = "sport";
+    for (i = 0; i < sourceJsonSelect.length; i++) {
+        var tags = sourceJsonSelect[i].tags;
+        //boucle sur spécialité
+        for (var k = 0; k < tags.length; k++) {
+            //correction faute d'orthographe
+            if (tags[k] ==="sports") {
+                tags[k] = "sport";
+            }
+            //condition/comparaison spécialité et création fichephotographes
+            if (tags[k] === optionValue){
+                construction(sourceJsonSelect)
+            }
         }
-        //condition/comparaison spécialité et création fichephotographes
-        if (tags[k] === optionValue){
-            construction(sourceJsonSelect)
-}}}};
+    }
+};
 
 function construction(myJsonObj){
     var myPhotographer = new Photographers(myJsonObj[i].name);
@@ -150,7 +178,6 @@ function construction(myJsonObj){
 }
 
 var sourcePers;
-var likes;
 var totalLike;
 
 //construction pages photographe
@@ -166,87 +193,85 @@ function pagePhotographer(jsonObj){
     totalLike = 0;
     var pagePhotographe = document.createElement('article');
     pagePhotographe.setAttribute("class","page__photographe");
-        var pagePhotographeInfo = document.createElement('div');
-        pagePhotographeInfo.setAttribute("class","page__photographe--info");
-        sectionPhotographe.appendChild(pagePhotographeInfo);
-        var triMedia = document.createElement('article');
-        triMedia.setAttribute("class","tri__medias");
-        sectionPhotographe.appendChild(triMedia);
-        var plageMedia = document.createElement('article');
-        plageMedia.setAttribute("class","plage__media");
-        sectionPhotographe.appendChild(plageMedia);
-        var mediaBottom = document.createElement('div');
+    var pagePhotographeInfo = document.createElement('div');
+    pagePhotographeInfo.setAttribute("class","page__photographe--info");
+    sectionPhotographe.appendChild(pagePhotographeInfo);
+    var triMedia = document.createElement('article');
+    triMedia.setAttribute("class","tri__medias");
+    sectionPhotographe.appendChild(triMedia);
+    var plageMedia = document.createElement('article');
+    plageMedia.setAttribute("class","plage__media");
+    sectionPhotographe.appendChild(plageMedia);
+    var mediaBottom = document.createElement('div');
     mediaBottom.setAttribute("class","media__bottom");
     sectionPhotographe.appendChild(mediaBottom);
-
 //Header Photographer
-            var vignetPhotographeInfo1 = document.createElement('div');
-            vignetPhotographeInfo1.setAttribute("class","vignet__photographe--info vignet__photographe--label");
-                var namePers = document.createElement('h2');
-                namePers.setAttribute("class","vignette__titre");
-                namePers.textContent = sourcePers.name;
-            vignetPhotographeInfo1.appendChild(namePers);
-                var cityPers = document.createElement('p');
-                cityPers.setAttribute("class","vignette__city");
-                cityPers.textContent = sourcePers.city + ", " + sourcePers.country;
-            vignetPhotographeInfo1.appendChild(cityPers);
-                var taglinePers = document.createElement('p');
-                taglinePers.setAttribute("class","vignette__tagline");
-                taglinePers.textContent = sourcePers.tagline;
-            vignetPhotographeInfo1.appendChild(taglinePers);
-                var tagPers = document.createElement('ul');
-                for (var j = 0; j < sourcePers.tags.length; j++) {
-                    var listItem = document.createElement('li');
-                    listItem.textContent = "#"+sourcePers.tags[j];
-                    tagPers.appendChild(listItem);
-                }
-            vignetPhotographeInfo1.appendChild(tagPers);
-        pagePhotographeInfo.appendChild(vignetPhotographeInfo1);
-            var vignetPhotographeInfo2 = document.createElement('div');
-            vignetPhotographeInfo2.setAttribute("class","vignet__photographe--info vignet__photographe--btn");
-                var btnContact = document.createElement('button');
-                btnContact.setAttribute("class","btn__contact");
-                btnContact.setAttribute("value","Contactez-moi");
-                btnContact.innerText="Contactez-moi";
-            vignetPhotographeInfo2.appendChild(btnContact);
-                btnContact.addEventListener("click",launchModal);
-        pagePhotographeInfo.appendChild(vignetPhotographeInfo2);
-            var vignetPhotographeInfo3 = document.createElement('div');
-            vignetPhotographeInfo3.setAttribute("class","vignet__photographe--info vignet__photographe--photo");
-                var imgPortrait = document.createElement('img');
-                imgPortrait.setAttribute("class","vignet__photo");
-                imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/Reduce/" + sourcePers.portrait);
-            vignetPhotographeInfo3.appendChild(imgPortrait);
-        pagePhotographeInfo.appendChild(vignetPhotographeInfo3);
-
+    var vignetPhotographeInfo1 = document.createElement('div');
+    vignetPhotographeInfo1.setAttribute("class","vignet__photographe--info vignet__photographe--label");
+    var namePers = document.createElement('h2');
+    namePers.setAttribute("class","vignette__titre");
+    namePers.textContent = sourcePers.name;
+    vignetPhotographeInfo1.appendChild(namePers);
+    var cityPers = document.createElement('p');
+    cityPers.setAttribute("class","vignette__city");
+    cityPers.textContent = sourcePers.city + ", " + sourcePers.country;
+    vignetPhotographeInfo1.appendChild(cityPers);
+    var taglinePers = document.createElement('p');
+    taglinePers.setAttribute("class","vignette__tagline");
+    taglinePers.textContent = sourcePers.tagline;
+    vignetPhotographeInfo1.appendChild(taglinePers);
+    var tagPers = document.createElement('ul');
+    for (var j = 0; j < sourcePers.tags.length; j++) {
+        var listItem = document.createElement('li');
+        listItem.textContent = "#"+sourcePers.tags[j];
+        tagPers.appendChild(listItem);
+    }
+    vignetPhotographeInfo1.appendChild(tagPers);
+    pagePhotographeInfo.appendChild(vignetPhotographeInfo1);
+    var vignetPhotographeInfo2 = document.createElement('div');
+    vignetPhotographeInfo2.setAttribute("class","vignet__photographe--info vignet__photographe--btn");
+    var btnContact = document.createElement('button');
+    btnContact.setAttribute("class","btn__contact");
+    btnContact.setAttribute("value","Contactez-moi");
+    btnContact.innerText="Contactez-moi";
+    vignetPhotographeInfo2.appendChild(btnContact);
+    btnContact.addEventListener("click",launchModal);
+    pagePhotographeInfo.appendChild(vignetPhotographeInfo2);
+    var vignetPhotographeInfo3 = document.createElement('div');
+    vignetPhotographeInfo3.setAttribute("class","vignet__photographe--info vignet__photographe--photo");
+    var imgPortrait = document.createElement('img');
+    imgPortrait.setAttribute("class","vignet__photo");
+    imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/" + sourcePers.portrait);
+    vignetPhotographeInfo3.appendChild(imgPortrait);
+    pagePhotographeInfo.appendChild(vignetPhotographeInfo3);
 //bouton de tri (base)
-        const triLabel = document.createElement('label');
-        triLabel.setAttribute("for","triSelect");
-        triLabel.setAttribute("class","tri__label");
-        triLabel.setAttribute("value","");
-        triLabel.textContent = "Trier par";
-        triMedia.appendChild(triLabel);
-        var divMedia = document.createElement('div');
-        divMedia.setAttribute('class','custom-select');
-        const triSelect = document.createElement('select');
-        triSelect.setAttribute("id","triSelect");
-        const triOptionDefault = document.createElement('option');
-        triOptionDefault.setAttribute("value","");
-        triOptionDefault.textContent = "--choisir un tri--";
-        const triOptionDate = document.createElement('option');
-        triOptionDate.setAttribute("value","date");
-        triOptionDate.textContent = "Date";
-        const triOptionTitre = document.createElement('option');
-        triOptionTitre.setAttribute("value","titre");
-        triOptionTitre.textContent = "Titre";
-        const triOptionPopularite = document.createElement('option');
-        triOptionPopularite.setAttribute("value","popularité");
-        triOptionPopularite.textContent = "Popularité";
-        triSelect.appendChild(triOptionDefault);
-        triSelect.appendChild(triOptionPopularite);
-        triSelect.appendChild(triOptionDate);
-        triSelect.appendChild(triOptionTitre);
-        divMedia.appendChild(triSelect);
+    const triLabel = document.createElement('label');
+    triLabel.setAttribute("for","triSelect");
+    triLabel.setAttribute("class","tri__label");
+    triLabel.setAttribute("value","");
+    triLabel.textContent = "Trier par";
+    triMedia.appendChild(triLabel);
+    var divMedia = document.createElement('div');
+    divMedia.setAttribute('class','custom-select');
+    const triSelect = document.createElement('select');
+    triSelect.setAttribute("id","triSelect");
+    const triOptionDefault = document.createElement('option');
+    triOptionDefault.setAttribute("value","");
+    triOptionDefault.textContent = "--choisir un tri--";
+    const triOptionDate = document.createElement('option');
+    triOptionDate.setAttribute("value","date");
+    triOptionDate.textContent = "Date";
+    const triOptionTitre = document.createElement('option');
+    triOptionTitre.setAttribute("value","titre");
+    triOptionTitre.textContent = "Titre";
+    const triOptionPopularite = document.createElement('option');
+    triOptionPopularite.setAttribute("value","popularité");
+    triOptionPopularite.textContent = "Popularité";
+    triSelect.appendChild(triOptionDefault);
+    triSelect.appendChild(triOptionPopularite);
+    triSelect.appendChild(triOptionDate);
+    triSelect.appendChild(triOptionTitre);
+    divMedia.appendChild(triSelect);
     triMedia.appendChild(divMedia);
 // customisation bouton de tri    
     var customSelect = document.getElementsByClassName("custom-select");
@@ -279,47 +304,44 @@ function pagePhotographer(jsonObj){
                 }
                 selectOrigineCiblePrev.click();
             });
-        selectItems.appendChild(optionElement);
+            selectItems.appendChild(optionElement);
         }
         customSelect[customCompteur].appendChild(selectItems);
-
         selectSelected.addEventListener("click", function(e) {
             e.stopPropagation();
             closeAllSelect(this);
             this.nextSibling.classList.toggle("select-hide");
             this.classList.toggle("select-arrow-active");
         });
-
         selectItems.addEventListener("click",function(event){
             event.stopPropagation();
-        if (triValue === "popularité"){ 
-            myJsonParse["media"].sort(function(a,b){
-                return a.likes-b.likes;
-            });
-        } else if (triValue === 'titre'){
-            myJsonParse["media"].sort(function compare(a,b){
-                if(a.title < b.title)
-                    return-1;
-                if(a.title>b.title)
-                    return 1;
-                return 0;
-            });
-        } else if (triValue === 'date'){
-            myJsonParse["media"].sort(function compare(a,b){
-                if(a.date < b.date)
-                    return-1;
-                if(a.date>b.date)
-                    return 1;
-                return 0;
-            });
-        }
-        while (plageMedia.firstChild){
-        plageMedia.removeChild(plageMedia.firstChild);
-        }
-        plancheImage();
+            if (triValue === "popularité"){ 
+                myJsonParse["media"].sort(function(a,b){
+                    return a.likes-b.likes;
+                    });
+            } else if (triValue === 'titre'){
+                myJsonParse["media"].sort(function compare(a,b){
+                    if(a.title < b.title)
+                        return-1;
+                    if(a.title>b.title)
+                        return 1;
+                    return 0;
+                });
+            } else if (triValue === 'date'){
+                myJsonParse["media"].sort(function compare(a,b){
+                    if(a.date < b.date)
+                        return-1;
+                    if(a.date>b.date)
+                        return 1;
+                    return 0;
+                });
+            }
+            while (plageMedia.firstChild){
+                plageMedia.removeChild(plageMedia.firstChild);
+            }
+            plancheImage();
         });
     }
-    
     function closeAllSelect(elmnt) {
         var i, arrNo = [];
         var selectItems = document.getElementsByClassName("select-items");
@@ -338,23 +360,21 @@ function pagePhotographer(jsonObj){
         }
     }
     document.addEventListener("click", closeAllSelect);
-
 //planche medias
     plancheImage()
-
 //creation footer media
-        var likeBottom = document.createElement('div');
-        likeBottom.setAttribute("class","like__bottom");
-            var likeTotal = document.createElement('p');    
-            likeTotal.textContent = totalLike;
-        likeBottom.appendChild(likeTotal)
-            var heart = document.createElement('i');
-            heart.setAttribute("class","fas fa-heart");
-        likeBottom.appendChild(heart)
+    var likeBottom = document.createElement('div');
+    likeBottom.setAttribute("class","like__bottom");
+    var likeTotal = document.createElement('p');    
+    likeTotal.textContent = totalLike;
+    likeBottom.appendChild(likeTotal)
+    var heart = document.createElement('i');
+    heart.setAttribute("class","fas fa-heart");
+    likeBottom.appendChild(heart)
     mediaBottom.appendChild(likeBottom);
-        var pricePers = document.createElement('p');
-        pricePers.setAttribute("class","media__price");
-        pricePers.textContent = sourcePers.price + '€/jour';
+    var pricePers = document.createElement('p');
+    pricePers.setAttribute("class","media__price");
+    pricePers.textContent = sourcePers.price + '€/jour';
     mediaBottom.appendChild(pricePers);
 };
 
@@ -405,79 +425,64 @@ function plancheImage(){
     var plageMedia = document.querySelector('.plage__media');
     var plageMediaMedia = document.createElement('div');
     plageMediaMedia.setAttribute('class','medias');
-for(var mediacompteur = 0; mediacompteur<myJsonParse["media"].length; mediacompteur++){
-    var media=myJsonParse["media"][mediacompteur];
-    var medias = document.createElement('div');
-    medias.setAttribute('class','mediasInside');
-    var lightboxLien = document.createElement('a');
-    if(media.photographerId===sourcePers.id){
-        if (media.video === undefined){
-            var imageFactory = new ImageFactory();
-            var image = imageFactory.createMedia(media);
-            lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.image)
-            var photoMedia = document.createElement('img');
-            photoMedia.setAttribute("class","media__photo");
-            photoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.image);
-            photoMedia.setAttribute("alt",media.title);
-            lightboxLien.appendChild(photoMedia)
-            medias.appendChild(lightboxLien);
+    for(var mediacompteur = 0; mediacompteur<myJsonParse["media"].length; mediacompteur++){
+        var media=myJsonParse["media"][mediacompteur];
+        var medias = document.createElement('div');
+        medias.setAttribute('class','mediasInside');
+        var lightboxLien = document.createElement('a');
+        if(media.photographerId===sourcePers.id){
+            if (media.video === undefined){
+                var imageFactory = new ImageFactory();
+                var image = imageFactory.createMedia(media);
+                lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+ "/" +media.image);
+                var photoMedia = document.createElement('img');
+                photoMedia.setAttribute("class","media__photo");
+                photoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + media.image);
+                photoMedia.setAttribute("alt",media.title);
+                lightboxLien.appendChild(photoMedia)
+                medias.appendChild(lightboxLien);
+            } if(media.image === undefined){
+                var videoFactory = new VideoFactory();
+                var video = videoFactory.createMedia(media);
+                lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + media.video)
+                var videoMedia = document.createElement('video');
+                videoMedia.setAttribute("class","media__photo");
+                videoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + media.video);
+                videoMedia.setAttribute("alt",media.title);
+                lightboxLien.appendChild(videoMedia)
+                medias.appendChild(lightboxLien);
+            }
+            var legendMedia = document.createElement('div');
+            legendMedia.setAttribute("class","media__legend");
+            var titreMedia = document.createElement('h3');
+            titreMedia.setAttribute("class","media__titre");
+            titreMedia.textContent = media.title;
+            legendMedia.appendChild(titreMedia);
+            var likeMedia=document.createElement('div');
+            likeMedia.setAttribute("class","media__like");
+            var likeMediaCount = document.createElement('p');
+            likeMediaCount.setAttribute("class","media__like");
+            likeMediaCount.textContent = media.likes;
+            totalLike = totalLike + media.likes;
+            var heart = document.createElement('i');
+            heart.setAttribute("class","fas fa-heart");
+            likeMedia.appendChild(likeMediaCount);
+            likeMedia.appendChild(heart);
+            legendMedia.appendChild(likeMedia);
+            medias.appendChild(legendMedia);
+            plageMediaMedia.appendChild(medias);
         }
-        if(media.image === undefined){
-            var videoFactory = new VideoFactory();
-            var video = videoFactory.createMedia(media);
-            lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.video)
-            var videoMedia = document.createElement('video');
-            videoMedia.setAttribute("class","media__photo");
-            var videoMediaSrc = document.createElement('source')
-            videoMediaSrc.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/resized/" + media.video);
-            videoMedia.setAttribute("alt",media.title);
-            videoMedia.appendChild(videoMediaSrc)
-            lightboxLien.appendChild(videoMedia)
-            medias.appendChild(lightboxLien);
-        }
-        var legendMedia = document.createElement('div');
-        legendMedia.setAttribute("class","media__legend");
-        var titreMedia = document.createElement('h3');
-        titreMedia.setAttribute("class","media__titre");
-        titreMedia.textContent = media.title;
-        legendMedia.appendChild(titreMedia);
-
-        var likeMedia=document.createElement('div');
-        likeMedia.setAttribute("class","media__like");
-        
-        var likeMediaCount = document.createElement('p');
-        likeMediaCount.setAttribute("class","media__like");
-        var heartSpan = document.createElement('button');
-        
-        var heart = document.createElement('i');
-        heart.setAttribute("class","fas fa-heart");
-        
-        likeMedia.appendChild(likeMediaCount);
-        heartSpan.appendChild(heart);
-        likeMedia.appendChild(heartSpan);
-        likes = media.likes;
-        heartSpan.setAttribute('value',likes);
-
-        likeMediaCount.textContent = likes;
-        totalLike = totalLike + likes;
-        
-        legendMedia.appendChild(likeMedia);
-        medias.appendChild(legendMedia);
-        plageMediaMedia.appendChild(medias);
-        
+        plageMedia.appendChild(plageMediaMedia)
     }
-    plageMedia.appendChild(plageMediaMedia);
-}
     class Lightbox{
         static init(){
             const links=Array.from(document.querySelectorAll('a[href$=".jpg"], a[href$=".mp4"]'))
             const gallery = links.map(link => link.getAttribute('href'))
             links.forEach(link => link.addEventListener('click', e => {
-                    e.preventDefault()
-                    new Lightbox(e.currentTarget.getAttribute('href'), gallery)
-                }))
+                e.preventDefault()
+                new Lightbox(e.currentTarget.getAttribute('href'),gallery)
+            }))
         }
-    
         constructor (url, gallery){
             this.element = this.buildDOM(url);
             this.gallery = gallery;
@@ -490,66 +495,57 @@ for(var mediacompteur = 0; mediacompteur<myJsonParse["media"].length; mediacompt
             this.url=null
             var image;
             if (url.split('.')[1]==="jpg"){
-            image = document.createElement('img');
-            console.log(image)
+                image = document.createElement('img');
+                image.src = url;
             } else if (url.split('.')[1]==="mp4"){
-            image = document.createElement('video');
-
-            const imageSrc = document.createElement('source');
-            imageSrc.setAttribute('src',url);
-            image.appendChild(imageSrc);
-            console.log(image);
+                image = document.createElement('video');
+                image.controls = true;
+                image.autoplay = true;
+                image.style.width = "100%";
+                image.setAttribute('name',"media");
+                var imageSrc = document.createElement('source');
+                imageSrc.type="video/mp4";
+                imageSrc.src = url;
+                image.appendChild(imageSrc)
             }
             const container = this.element.querySelector('.lightbox__container');
-            const loader = document.createElement('div')
-            loader.classList.add('lightbox__loader');
             container.innerHTML =''
-            container.appendChild(loader);
             this.url=url;
-            image.onload = () => {
-                console.log("chargée")
-                container.removeChild(loader);
-                container.appendChild(image);
+            container.appendChild(image);
+        }
+        onKeyUp (e){
+            if(e.key==='Escape'){
+                this.close(e)
+            }else if(e.key==='ArrowLeft'){
+                this.prev(e)
+            }else if(e.key==='ArrowRight'){
+                this.next(e)
             }
-            image.src = url;
         }
-    onKeyUp (e){
-        if(e.key==='Escape'){
-            this.close(e)
-        }else if(e.key==='ArrowLeft'){
-            this.prev(e)
-        }else if(e.key==='ArrowRight'){
-            this.next(e)
+        close (e){
+            e.preventDefault()
+            this.element.classList.add('fadeOut')
+            window.setTimeout(()=>{
+                this.element.parentElement.removeChild(this.element)
+            }, 500)
+            document.removeEventListener('keyup', this.onKeyUp);
         }
-    }
-        
-    close (e){
-        e.preventDefault()
-        this.element.classList.add('fadeOut')
-        window.setTimeout(()=>{
-            this.element.parentElement.removeChild(this.element)
-        }, 500)
-        document.removeEventListener('keyup', this.onKeyUp);
-    }
-    
-    next (e){
-    e.preventDefault()
-    var i = this.gallery.findIndex(image => image === this.url)
-    if (i=== this.gallery.length -1){
-        i = -1
-    }
-    this.loadImage(this.gallery[i + 1])
-    }
-    
-    prev (e){
-    e.preventDefault()
-    var i = this.gallery.findIndex(image => image === this.url)
-    if (i=== 0){
-        i = this.gallery.length
-    }
-    this.loadImage(this.gallery[i - 1])
-    }
-    
+        next (e){
+            e.preventDefault()
+            var i = this.gallery.findIndex(image => image === this.url)
+            if (i=== this.gallery.length -1){
+                i = -1
+            }
+            this.loadImage(this.gallery[i + 1])
+        }
+        prev (e){
+            e.preventDefault()
+            var i = this.gallery.findIndex(image => image === this.url)
+            if (i=== 0){
+                i = this.gallery.length
+            }
+            this.loadImage(this.gallery[i - 1])
+        }
         buildDOM(url){
             const dom = document.createElement('div');
             dom.classList.add('lightbox');
@@ -560,9 +556,7 @@ for(var mediacompteur = 0; mediacompteur<myJsonParse["media"].length; mediacompt
             return dom;
         }
     }
-    
     Lightbox.init()
-
 };
 
 //effet bouton contactez-moi
@@ -572,7 +566,6 @@ var emailValue;
 var messageValue;
 
 function launchModal(){
-    
     const modalBg = document.createElement('div');
     modalBg.setAttribute("class","bground");
     sectionPhotographe.appendChild(modalBg);
@@ -580,203 +573,180 @@ function launchModal(){
     content.setAttribute("class","content");
     modalBg.appendChild(content);
     if (firstValue == null || firstValue == "" || firstValue == undefined|| lastValue == null || lastValue == "" || lastValue == undefined|| emailValue == null || emailValue == "" || emailValue == undefined|| messageValue == null || messageValue == "" || messageValue == undefined){
-    const enteteModal = document.createElement('div');
-    enteteModal.setAttribute("class","entete-modal");
-    content.appendChild(enteteModal);
-    enteteModal.innerHTML = "<h4 class='titre-modal'>Contactez-moi</br>"+sourcePers.name+"</h4>";
-    const close = document.createElement('span');
-    close.setAttribute("class","close");
-    enteteModal.appendChild(close);
-    const closeBtn = document.querySelectorAll(".close");
-    closeBtn.forEach((btnClose) => btnClose.addEventListener("click", closeModal));
-    const modalBody = document.createElement('div');
-    modalBody.setAttribute("class","modal-body");
-    content.appendChild(modalBody);
-    const formModal = document.createElement('form');
-    formModal.setAttribute("name","contact");
-    formModal.setAttribute("action","index.html");
-    formModal.setAttribute("method","POST");
-    formModal.setAttribute("onsubmit","return validate()");
-    modalBody.appendChild(formModal);
-    const formDataPrenom = document.createElement('div');
-    formDataPrenom.setAttribute("class","formData");
-    formModal.appendChild(formDataPrenom);
-    formDataPrenom.innerHTML = "<label for='first'>Prénom</label></br>";
-    const inputPrenom = document.createElement('input');
-    inputPrenom.setAttribute("class","text-control");
-    inputPrenom.setAttribute("type","text");
-    inputPrenom.setAttribute("id","first");
-    inputPrenom.setAttribute("name","first");
-    formDataPrenom.appendChild(inputPrenom);
-    const formDataNom = document.createElement('div');
-    formDataNom.setAttribute("class","formData");
-    formModal.appendChild(formDataNom);
-    formDataNom.innerHTML = "<label for='last'>Nom</label></br>";
-    const inputNom = document.createElement('input');
-    inputNom.setAttribute("class","text-control");
-    inputNom.setAttribute("type","text");
-    inputNom.setAttribute("id","last");
-    inputNom.setAttribute("name","last");
-    formDataNom.appendChild(inputNom);
-    const formDataMail = document.createElement('div');
-    formDataMail.setAttribute("class","formData");
-    formModal.appendChild(formDataMail);
-    formDataMail.innerHTML = "<label for='email'>Email</label></br>";
-    const inputMail = document.createElement('input');
-    inputMail.setAttribute("class","text-control");
-    inputMail.setAttribute("type","email");
-    inputMail.setAttribute("id","email");
-    inputMail.setAttribute("name","email");
-    formDataMail.appendChild(inputMail);
-    const formDataMessage = document.createElement('div');
-    formDataMessage.setAttribute("class","formData");
-    formModal.appendChild(formDataMessage);
-    formDataMessage.innerHTML = "<label for='message'>Votre Message</label></br>";
-    const inputMessage = document.createElement('textarea');
-    inputMessage.setAttribute("class","text-control");
-    inputMessage.setAttribute("rows","4");
-    inputMessage.setAttribute("id","message");
-    inputMessage.setAttribute("name","message");
-    formDataMessage.appendChild(inputMessage);
-    const btnEnvoi = document.createElement('button');
-    btnEnvoi.setAttribute("class","button btn__submit");
-    btnEnvoi.setAttribute("type","submit");
-    btnEnvoi.setAttribute("value","Envoyer");
-    btnEnvoi.innerText="Envoyer";
-    formModal.appendChild(btnEnvoi);
-    control();
+        const enteteModal = document.createElement('div');
+        enteteModal.setAttribute("class","entete-modal");
+        content.appendChild(enteteModal);
+        enteteModal.innerHTML = "<h4 class='titre-modal'>Contactez-moi</br>"+sourcePers.name+"</h4>";
+        const close = document.createElement('span');
+        close.setAttribute("class","close");
+        enteteModal.appendChild(close);
+        const closeBtn = document.querySelectorAll(".close");
+        closeBtn.forEach((btnClose) => btnClose.addEventListener("click", closeModal));
+        const modalBody = document.createElement('div');
+        modalBody.setAttribute("class","modal-body");
+        content.appendChild(modalBody);
+        const formModal = document.createElement('form');
+        formModal.setAttribute("name","contact");
+        formModal.setAttribute("action","index.html");
+        formModal.setAttribute("method","POST");
+        formModal.setAttribute("onsubmit","return validate()");
+        modalBody.appendChild(formModal);
+        const formDataPrenom = document.createElement('div');
+        formDataPrenom.setAttribute("class","formData");
+        formModal.appendChild(formDataPrenom);
+        formDataPrenom.innerHTML = "<label for='first'>Prénom</label></br>";
+        const inputPrenom = document.createElement('input');
+        inputPrenom.setAttribute("class","text-control");
+        inputPrenom.setAttribute("type","text");
+        inputPrenom.setAttribute("id","first");
+        inputPrenom.setAttribute("name","first");
+        formDataPrenom.appendChild(inputPrenom);
+        const formDataNom = document.createElement('div');
+        formDataNom.setAttribute("class","formData");
+        formModal.appendChild(formDataNom);
+        formDataNom.innerHTML = "<label for='last'>Nom</label></br>";
+        const inputNom = document.createElement('input');
+        inputNom.setAttribute("class","text-control");
+        inputNom.setAttribute("type","text");
+        inputNom.setAttribute("id","last");
+        inputNom.setAttribute("name","last");
+        formDataNom.appendChild(inputNom);
+        const formDataMail = document.createElement('div');
+        formDataMail.setAttribute("class","formData");
+        formModal.appendChild(formDataMail);
+        formDataMail.innerHTML = "<label for='email'>Email</label></br>";
+        const inputMail = document.createElement('input');
+        inputMail.setAttribute("class","text-control");
+        inputMail.setAttribute("type","email");
+        inputMail.setAttribute("id","email");
+        inputMail.setAttribute("name","email");
+        formDataMail.appendChild(inputMail);
+        const formDataMessage = document.createElement('div');
+        formDataMessage.setAttribute("class","formData");
+        formModal.appendChild(formDataMessage);
+        formDataMessage.innerHTML = "<label for='message'>Votre Message</label></br>";
+        const inputMessage = document.createElement('textarea');
+        inputMessage.setAttribute("class","text-control");
+        inputMessage.setAttribute("rows","4");
+        inputMessage.setAttribute("id","message");
+        inputMessage.setAttribute("name","message");
+        formDataMessage.appendChild(inputMessage);
+        const btnEnvoi = document.createElement('button');
+        btnEnvoi.setAttribute("class","button btn__submit");
+        btnEnvoi.setAttribute("type","submit");
+        btnEnvoi.setAttribute("value","Envoyer");
+        btnEnvoi.innerText="Envoyer";
+        formModal.appendChild(btnEnvoi);
+        control();
     }else{
-      content.innerHTML = "<h4 class='message-modal'>Vous avez déjà envoyé un message à "+sourcePers.name+"</h4><button class='btn-close btn__contact' value='Close'>Close</button>"
-      const closeBtnModal = document.querySelector(".btn-close");
-      closeBtnModal.addEventListener('click',closeModal);
+        content.innerHTML = "<h4 class='message-modal'>Vous avez déjà envoyé un message à "+sourcePers.name+"</h4><button class='btn-close btn__contact' value='Close'>Close</button>"
+        const closeBtnModal = document.querySelector(".btn-close");
+        closeBtnModal.addEventListener('click',closeModal);
     }
 }
-
 
 function closeModal() {
     const modalBg = document.querySelector(".bground");
     sectionPhotographe.removeChild(modalBg);
 }
 
-
 function control(){
-const formData = document.querySelectorAll(".formData");
-const textControl = document.querySelectorAll(".text-control");
-
-for( var j = 0; j < textControl.length; j++){
-  textControl[j].setAttribute("data-compteur",j);
-}
-
-for (var i = 0; i < formData.length; i++) {
-    formData[i].addEventListener("change", function(e){
-      var value = e.target.value;
-      var idInput = e.target.id;
-      var nameInput =e.target.name;
-      var iControl = e.target.getAttribute("data-compteur");
-        function testInput(regex, chaine){
-          if (regex.test(chaine)) {
-            formData[iControl].removeAttribute("data-error")
-            formData[iControl].setAttribute("data-error-visible",false);
-            switch (nameInput) {
-              case "first" :
-                firstValue = value;
-                break;
-              case "last" :
-                lastValue = value;
-                break;
-              case "email" :
-                emailValue = value;
-                break;
-              case "message" :
-                messageValue = value;
-                break;
-              }
-          } else {
-            formData[iControl].setAttribute("data-error-visible",true);
-            switch (nameInput) {
-              case "first" :
-                firstValue = "";
-                formData[iControl].setAttribute("data-error","Veuillez entrer un minimum de 2 caractères (Aa-Zz)");
-                break;
-              case "last" :
-                lastValue = "";
-                formData[iControl].setAttribute("data-error","Veuillez entrer un minimum de 2 caractères (Aa-Zz)");
-                break;
-              case "email" :
-                emailValue = "";
-                formData[iControl].setAttribute("data-error","Veuillez renseigner un email valide (***@***.***)");
-                break;
-              case "message" :
-                messageValue = "";
-                formData[iControl].setAttribute("data-error","Veuillez préciser votre demande");
-                break;
-              default :
-                formData[iControl].setAttribute("data-error","cet élément n'est pas renseigné correctement");
-              }
+    const formData = document.querySelectorAll(".formData");
+    const textControl = document.querySelectorAll(".text-control");
+    for( var j = 0; j < textControl.length; j++){
+        textControl[j].setAttribute("data-compteur",j);
+    }
+    for (var i = 0; i < formData.length; i++) {
+        formData[i].addEventListener("change", function(e){
+            var value = e.target.value;
+            var idInput = e.target.id;
+            var nameInput =e.target.name;
+            var iControl = e.target.getAttribute("data-compteur");
+            function testInput(regex, chaine){
+                if (regex.test(chaine)) {
+                    formData[iControl].removeAttribute("data-error")
+                    formData[iControl].setAttribute("data-error-visible",false);
+                    switch (nameInput) {
+                        case "first" :
+                            firstValue = value;
+                            break;
+                        case "last" :
+                            lastValue = value;
+                            break;
+                        case "email" :
+                            emailValue = value;
+                            break;
+                        case "message" :
+                            messageValue = value;
+                        break;
+                    }
+                } else {
+                    formData[iControl].setAttribute("data-error-visible",true);
+                    switch (nameInput) {
+                        case "first" :
+                            firstValue = "";
+                            formData[iControl].setAttribute("data-error","Veuillez entrer un minimum de 2 caractères (Aa-Zz)");
+                            break;
+                        case "last" :
+                            lastValue = "";
+                            formData[iControl].setAttribute("data-error","Veuillez entrer un minimum de 2 caractères (Aa-Zz)");
+                            break;
+                        case "email" :
+                            emailValue = "";
+                            formData[iControl].setAttribute("data-error","Veuillez renseigner un email valide (***@***.***)");
+                            break;
+                        case "message" :
+                            messageValue = "";
+                            formData[iControl].setAttribute("data-error","Veuillez préciser votre demande");
+                            break;
+                        default :
+                            formData[iControl].setAttribute("data-error","cet élément n'est pas renseigné correctement");
+                    }
+                }
             }
-        }
-      switch (idInput) {
-      case "first" :
-      case "last" :
-        testInput(/^[A-Za-z -]\D{1,}$/,value);
-        break;
-      case "email" :
-        testInput(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/,value);
-        break;
-      case "message" : 
-        testInput(/^[A-Za-z0-9]{1,}$/,value);
-        break;
-      default:;
-  }})};}
+            switch (idInput) {
+                case "first" :
+                case "last" :
+                    testInput(/^[A-Za-z -]\D{1,}$/,value);
+                    break;
+                case "email" :
+                    testInput(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$/,value);
+                    break;
+                case "message" : 
+                    testInput(/^[A-Za-z0-9]{1,}$/,value);
+                    break;
+                default:;
+            }
+        })
+    }
+}
 
 function validate(){
     const form = document.querySelector("form");
     const enteteModal = document.querySelector(".entete-modal");
     const modalBody = document.querySelector(".modal-body");
     if (firstValue == null || firstValue == "" || firstValue == undefined){
-      document.querySelector('#first').parentNode.setAttribute("data-error-visible",true);
-      document.querySelector('#first').parentNode.setAttribute("data-error","Merci d'indiquer votre prénom");
-      return false;
+        document.querySelector('#first').parentNode.setAttribute("data-error-visible",true);
+        document.querySelector('#first').parentNode.setAttribute("data-error","Merci d'indiquer votre prénom");
+        return false;
     } else if (lastValue == null || lastValue == "" || lastValue == undefined){
-      document.querySelector('#last').parentNode.setAttribute("data-error-visible",true);
-      document.querySelector('#last').parentNode.setAttribute("data-error","Merci d'indiquer votre nom");
-      return false;
+        document.querySelector('#last').parentNode.setAttribute("data-error-visible",true);
+        document.querySelector('#last').parentNode.setAttribute("data-error","Merci d'indiquer votre nom");
+        return false;
     } else if (emailValue == null || emailValue == "" || emailValue == undefined){
-      document.querySelector('#email').parentNode.setAttribute("data-error-visible",true);
-      document.querySelector('#email').parentNode.setAttribute("data-error","Merci d'indiquer votre email");
-      return false;
+        document.querySelector('#email').parentNode.setAttribute("data-error-visible",true);
+        document.querySelector('#email').parentNode.setAttribute("data-error","Merci d'indiquer votre email");
+        return false;
     } else if (messageValue == null || messageValue == "" || messageValue == undefined){
-      document.querySelector('#message').parentNode.setAttribute("data-error-visible",true);
-      document.querySelector('#message').parentNode.setAttribute("data-error","Merci d'indiquer votre message");
-      return false;
+        document.querySelector('#message').parentNode.setAttribute("data-error-visible",true);
+        document.querySelector('#message').parentNode.setAttribute("data-error","Merci d'indiquer votre message");
+        return false;
     } else {
-      form.style.display = "none";
-      enteteModal.style.opacity ="0";
-      modalBody.innerHTML = "<h4 class='message-modal'>Merci !<br/><br/>Votre demande a bien été envoyée à "+sourcePers.name+"</h4><button class='btn-close btn__contact' value='Close'>Close</button>"
-      const closeBtnModal = document.querySelector(".btn-close");
-      closeBtnModal.addEventListener('click',closeModal);
-      return true;
-  }};
-
-
-//bouton retour
-var ratio = 0.5;
-var interOptions = {
-    root:null,
-    rootMargin:'0px 0px 0px 0px',
-    threshold: ratio
-}
-
-function interDo(entries, observer){
-    entries.forEach(function(entry){
-        if(entry.intersectionRatio < ratio){
-            retourBtn.style.display="block";
-        }else{
-            retourBtn.style.display="none";
-        }
-    })
-}
-
-var observer = new IntersectionObserver (interDo, interOptions);
-var interTarget = nav;
-observer.observe(interTarget);
+        form.style.display = "none";
+        enteteModal.style.opacity ="0";
+        modalBody.innerHTML = "<h4 class='message-modal'>Merci !<br/><br/>Votre demande a bien été envoyée à "+sourcePers.name+"</h4><button class='btn-close btn__contact' value='Close'>Close</button>"
+        const closeBtnModal = document.querySelector(".btn-close");
+        closeBtnModal.addEventListener('click',closeModal);
+        return true;
+    }
+};
