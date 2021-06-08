@@ -410,7 +410,9 @@ ImageFactory.prototype.createMedia = function(options){
 function VideoFactory(){}
 VideoFactory.prototype = new ImageFactory();
 VideoFactory.prototype.mediaClass=Video;
+
 var mediacompteur;
+
 function plancheImage(){
     totalLike=0;
 if (tableauLikes.length===0){
@@ -429,36 +431,34 @@ if (tableauLikes.length===0){
         medias.setAttribute('class','mediasInside');
         var lightboxLien = document.createElement('a');
         if(media.photographerId===sourcePers.id){
+            var image;
+            var typeMedia;
+            var elementMedia;
             if (media.video === undefined){
                 var imageFactory = new ImageFactory();
-                var image = imageFactory.createMedia(media);
-                lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+ "/Resized/" +media.image);
-                lightboxLien.setAttribute('class','lien__media');
-                var photoMedia = document.createElement('img');
-                photoMedia.setAttribute("class","media__photo");
-                photoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/Resized/" + media.image);
-                photoMedia.setAttribute("alt",media.title);
-                lightboxLien.appendChild(photoMedia)
-                medias.appendChild(lightboxLien);
+                image = imageFactory.createMedia(media);
+                typeMedia = image.image;
+                elementMedia = document.createElement('img');
             } if(media.image === undefined){
                 var videoFactory = new VideoFactory();
-                var video = videoFactory.createMedia(media);
-                lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + media.video)
-                lightboxLien.setAttribute('class','lien__media');
-                var videoMedia = document.createElement('video');
-                videoMedia.setAttribute("class","media__photo");
-                videoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + media.video);
-                videoMedia.setAttribute("alt",media.title);
-                lightboxLien.appendChild(videoMedia)
-                medias.appendChild(lightboxLien);
+                image = videoFactory.createMedia(media);
+                typeMedia = image.video;
+                elementMedia = document.createElement('video');
             }
+            lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + typeMedia)
+            lightboxLien.setAttribute('class','lien__media');
+            elementMedia.setAttribute("class","media__photo");
+            elementMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/Resized/" + typeMedia);
+            elementMedia.setAttribute("alt",image.title);
+            lightboxLien.appendChild(elementMedia)
+            medias.appendChild(lightboxLien);
             tableauLiens.push(lightboxLien.getAttribute('href'))
             var legendMedia = document.createElement('div');
             legendMedia.setAttribute("class","media__legend");
             var titreMedia = document.createElement('h3');
             titreMedia.setAttribute("class","media__titre");
-            titreMedia.textContent = media.title;
-            tableauTitres.push(media.title);
+            titreMedia.textContent = image.title;
+            tableauTitres.push(image.title);
             legendMedia.appendChild(titreMedia);
             likeMedia=document.createElement('div');
             likeMedia.setAttribute("class","media__like");
@@ -522,7 +522,6 @@ function plusLikes(jsonObj){
 }
 
 var sourceLightbox;
-
 function lightbox(jsonObj){
     sourceLightbox = jsonObj;
     index = tableauLiens.findIndex(lien => lien === sourceLightbox)
@@ -545,7 +544,6 @@ function lightbox(jsonObj){
     lightboxDiv.appendChild(container);
     const containerElement= document.createElement('div');
     containerElement.classList.add('lightbox__container--element');
-    
     loadImage();
     function loadImage(){
         if (sourceLightbox.split('.')[1]==="jpg"){
