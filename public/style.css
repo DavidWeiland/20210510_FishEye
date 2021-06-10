@@ -33,6 +33,27 @@ h1{
 .retour{
     position:fixed;
     top:5vh;
+    left:50%;
+    margin-left: -91px;
+    cursor: pointer;
+    width: 182px;
+    height: 30px;
+    background-color:#DB8876;
+    color:#000000;
+    border-radius: 5px;
+    font-size: 18px;
+    text-decoration: none;
+    text-align: center;
+    display: flex;
+    padding-top: 2px;
+    align-items: center;
+    box-sizing: border-box;
+}
+.passe{
+    position:fixed;
+    top:-50vh;
+    left:50%;
+    margin-left: -91px;
     cursor: pointer;
     width: 182px;
     height: 30px;
@@ -80,10 +101,7 @@ h1{
     display: flex;
     justify-content: center;
 }
-.input__option{
-    display: none;
-}
-.input__option + label{
+.label__option, .label__option--inactif{
     border: 0.5px solid #C4C4C4;
     border-radius: 11px;
     display: inline-block;
@@ -95,10 +113,17 @@ h1{
     font-family: "DM sans", arial;
     color:#901C1C;
     text-align: center;
-    cursor : pointer;
+}
+.label__option{
+    cursor:pointer;
+}
+.label__option:focus,
+.label__option:hover{
+    background-color: #DB8876;
+    color:#000000;
 }
 
-.input__option[checked=true] + label{
+.label__option[aria-checked=true]{
     background-color: #901C1C;
     color:#FFF;
 }
@@ -156,42 +181,41 @@ main{
 }
 .vignette__tagline{
     margin:0;
-    font-size: 10px;
+    font-size: 11px;
     color:#000000;
     text-align: center;
 }
 .vignette__price{
     margin:0;
-    font-size: 9px;
+    font-size: 11px;
     color:#757575;
     text-align: center;
 }
-.vignette ul, .page__photographe--info ul {
+
+.page__photographe--info ul {
     width: 100%;
-    height: 16px;
+    height: auto;
     margin-top: 5px;
     padding:0;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     text-decoration: none;
     list-style-type: none;
 }
-.page__photographe--info ul{
-    justify-content: flex-start;
-}
 
-.vignette ul li, .page__photographe--info ul li{
+.page__photographe--info ul li{
     border: 0.5px solid #C4C4C4;
     border-radius: 11px;
     box-sizing: border-box;
-    height: 100%;
+    height: auto;
+    width: auto;
     margin-right: 1%;
     padding-left: 2%;
     padding-right: 2%;
-    font-size: 12px;
+    font-size: 18px;
     font-family: "DM sans", arial;
     text-decoration: none;
     color:#901C1C;
@@ -221,11 +245,12 @@ main{
 }
 
 .vignet__photographe--label{
-    width:auto;
+    min-width:35%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+    margin:0;
     
 }
 .vignet__photographe--label > *{
@@ -242,21 +267,26 @@ main{
     font-size: 24px;
 }
 .vignet__photographe--label .vignette__tagline{
+    color:#525252;
     font-size: 18px;
 }
-.vignet__photographe--label ul{
+/*
+.vignet__photographe--label ul li{
     font-size: 18px;
-}
+    height: auto;
+}*/
+
 .vignet__photographe--photo{
-    min-width: 20%;
+    width: auto;
     display: flex;
     justify-content: center;
+    margin:initial;
 }
 .vignet__photographe--btn{
     display: flex;
     justify-content: flex-start;
     margin:initial;
-    width: 30%;
+    min-width: 30%;
 }
 .btn__contact,
 .btn__submit{
@@ -267,11 +297,16 @@ main{
     border:0;
     border-radius: 5px;
     align-self: flex-start;
-    font-size: 20px;
+    font-size: 18px;
     text-align: center;
     margin-top:5px;
     cursor: pointer;
 }
+/*.btn__contact:focus,
+.btn__contact:hover{
+    background-color: #DB8876;
+    color:#000000;
+}*/
 .plage__media, .tri__medias{
     width: 100%;
     display: flex;
@@ -341,7 +376,8 @@ main{
 .select-hide{
     display: none;
 }
-.select-items div:hover {
+.select-items div:hover,
+.select-items div:focus {
     background-color: #DB8876;
     color:#000000;
 }
@@ -368,6 +404,7 @@ main{
 }
 
 .media__photo{
+    background-color:#C4C4C4 ;
     width: 100%;
     height:220px;
     border-radius: 5px;
@@ -384,17 +421,17 @@ main{
 }
 h3{
     margin: 0;
-    font-size : 15px;
+    font-size : 24px;
 }
 .media__like{
     display: flex;
     justify-content: flex-end;
     align-items: center;
     margin: 0;
-    font-size : 15x;
+    font-size : 24px;
 }
 .fa-heart{
-    font-size: 15px;
+    font-size: 24px;
     margin-left: 5px;
 }
 
@@ -445,7 +482,7 @@ right : 10%;
     color: #000000;
     padding-top: 10px;
 }
-.modal-body, .entete-modal {
+form, .entete-modal {
     padding: 0px 8%;
     margin:auto;
 }
@@ -688,7 +725,7 @@ label {
     .vignet__photographe--label .vignette__tagline{
         font-size: 13px;
     }
-    .vignet__photographe--label ul{
+    .vignet__photographe--label ul li{
         font-size: 13px;
     }
     .vignet__photographe--photo{
