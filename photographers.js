@@ -900,11 +900,11 @@ function ValueForm(recever){
     this.message = "message";
     this.getInfo = function(){
         var valueForm =[];
-        valueForm.push('destinataire  :' + this.recever);
-        valueForm.push(this.first);
-        valueForm.push(this.last);
-        valueForm.push(this.email);
-        valueForm.push(this.message);
+        valueForm.push('PhotographerId : '+this.recever);
+        valueForm.push('First : '+this.first);
+        valueForm.push('Last : '+this.last);
+        valueForm.push('Email : '+this.email);
+        valueForm.push('Message : '+this.message);
         envoiForm.push(valueForm);
         console.log(JSON.stringify(envoiForm));
     };
