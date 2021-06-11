@@ -34,13 +34,9 @@ var interOptions = {
 function interDo(entries, observer){
     entries.forEach(function(entry){
         if(entry.intersectionRatio < ratio){
-            //retourBtn.style.display="block";
-            retourBtn.setAttribute('class','retour')
-            retourBtn.removeAttribute('href');
-            retourBtn.setAttribute('href','#logo');
+            retourBtn.style.display="block";
         }else{
-            retourBtn.setAttribute('class','passe');    
-            retourBtn.setAttribute('href','#vignette0')
+            retourBtn.style.display="none";
         }
     })
 }
@@ -62,7 +58,7 @@ function Photographers(name){
     this.getInfo = function(){
         var tags = this.tags;
         var vignette = document.createElement('article');
-        vignette.setAttribute('id','vignette'+i)
+        vignette.setAttribute('class','vignette__container')
         var vignetteLien = document.createElement('a');
         vignetteLien.setAttribute('tabindex',"0");
         vignetteLien.setAttribute('class',"vignette");
@@ -102,7 +98,7 @@ function Photographers(name){
             tagPers.appendChild(listItem);
         }
         vignette.appendChild(vignetteLien);
-        vignetteLien.appendChild(tagPers);
+        vignette.appendChild(tagPers);
         section.appendChild(vignette);
     }
 }
@@ -456,12 +452,13 @@ if (tableauLikes.length===0){
                 image = videoFactory.createMedia(media);
                 typeMedia = image.video;
                 elementMedia = document.createElement('video');
+                elementMedia.setAttribute('poster',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/Resized/" + typeMedia.split('.mp4')[0]+'.jpg');
             }
             lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + typeMedia)
             lightboxLien.setAttribute('class','lien__media');
             elementMedia.setAttribute("class","media__photo");
             elementMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/Resized/" + typeMedia);
-            elementMedia.setAttribute('poster',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/Resized/" + typeMedia.split('.mp4')[0]+'.jpg');
+            
             elementMedia.setAttribute("alt",image.title);
             lightboxLien.appendChild(elementMedia)
             medias.appendChild(lightboxLien);
