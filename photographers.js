@@ -20,8 +20,9 @@ const section = document.querySelector('#section');
 const sectionPhotographe = document.querySelector('#sectionPhotographe');
 const nav = document.querySelector('.nav');
 const h1 = document.querySelector('h1');
-const retourBtn = document.querySelector('.retour');
+var retourBtn;
 const banner = document.querySelector('.banner');
+
 
 //bouton retour
 var ratio = 0.5;
@@ -31,18 +32,31 @@ var interOptions = {
     threshold: ratio
 }
 
+function btnRetour(){
+    retourBtn=document.createElement('a');
+    retourBtn.setAttribute('tabindex','0');
+    retourBtn.setAttribute('role','link');
+    retourBtn.setAttribute('aria-label','passer le tri');
+    retourBtn.setAttribute('href','#section');
+    retourBtn.setAttribute('class','retour');
+    retourBtn.innerText="Passer au contenu";
+    banner.appendChild(retourBtn);
+}
+
 function interDo(entries, observer){
     entries.forEach(function(entry){
         if(entry.intersectionRatio < ratio){
-            retourBtn.style.display="block";
+            btnRetour();
         }else{
-            retourBtn.style.display="none";
+            retourBtn.style.display ='none'
         }
     })
 }
 
+retourBtn = document.querySelector('.retour');
+
 var observer = new IntersectionObserver (interDo, interOptions);
-var interTarget = nav;
+var interTarget = h1;
 observer.observe(interTarget);
 
 //constructeur vignette Photographers
@@ -64,6 +78,7 @@ function Photographers(name){
         vignetteLien.setAttribute('role','link');
         vignetteLien.setAttribute('aria-label',this.name)
         vignetteLien.setAttribute('class',"vignette");
+        vignetteLien.setAttribute('data-cible',i);
         vignetteLien.setAttribute('onclick',"return pagePhotographer(myJsonParse.photographers["+i+"])");
         var imgPortrait = document.createElement('img');
         imgPortrait.setAttribute("class","vignette__photo");
@@ -156,7 +171,32 @@ function choix(eventOption){
     option.forEach((btnOption)=>btnOption.addEventListener('click',choix));
 }
 
+document.addEventListener('keyup',generalKey);
+
+function generalKey(e){ 
+    e.preventDefault()
+    var ciblePhotog=e.target.getAttribute('role')
+    if(e.code=="Enter"){
+        console.log(ciblePhotog)
+        switch (ciblePhotog){
+            case "button" :
+                choix(e);
+                break;
+            case "link" :
+                pagePhotographer(myJsonParse.photographers[e.target.getAttribute('data-cible')]);
+                break;
+        }
+    }
+}
+
 function vignetPhotographersSelected (jsonObj){
+    while (sectionPhotographe.firstChild){
+        sectionPhotographe.removeChild(sectionPhotographe.firstChild);
+    };
+    nav.style.display = "block";
+    h1.style.display = "block";
+    btnRetour()
+
     var sourceJsonSelect = jsonObj["photographers"];
     for (i = 0; i < sourceJsonSelect.length; i++) {
         var tags = sourceJsonSelect[i].tags;
@@ -204,7 +244,7 @@ function pagePhotographer(jsonObj){
         section.removeChild(section.firstChild);
     };
     nav.style.display = "none";
-    h1.style.display = "none";
+    h1.style.opacity = "0";
     banner.removeChild(retourBtn);
 
     var pagePhotographeInfo = document.createElement('article');
@@ -860,7 +900,7 @@ function ValueForm(recever){
     this.message = "message";
     this.getInfo = function(){
         var valueForm =[];
-        valueForm.push(this.recever);
+        valueForm.push('destinataire  :' + this.recever);
         valueForm.push(this.first);
         valueForm.push(this.last);
         valueForm.push(this.email);
