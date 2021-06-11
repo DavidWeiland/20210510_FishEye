@@ -21,6 +21,7 @@ const sectionPhotographe = document.querySelector('#sectionPhotographe');
 const nav = document.querySelector('.nav');
 const h1 = document.querySelector('h1');
 const retourBtn = document.querySelector('.retour');
+const banner = document.querySelector('.banner');
 
 //bouton retour
 var ratio = 0.5;
@@ -57,50 +58,51 @@ function Photographers(name){
     this.getInfo = function(){
         var tags = this.tags;
         var vignette = document.createElement('article');
+        vignette.setAttribute('class','vignette__container')
         var vignetteLien = document.createElement('a');
-        //vignetteLien.setAttribute('href','#' + this.id);
+        vignetteLien.setAttribute('tabindex',"0");
+        vignetteLien.setAttribute('role','link');
+        vignetteLien.setAttribute('aria-label',this.name)
         vignetteLien.setAttribute('class',"vignette");
         vignetteLien.setAttribute('onclick',"return pagePhotographer(myJsonParse.photographers["+i+"])");
         var imgPortrait = document.createElement('img');
         imgPortrait.setAttribute("class","vignette__photo");
         imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/Resized/" + this.portrait);
+        imgPortrait.setAttribute("alt", "");
         vignetteLien.appendChild(imgPortrait);
         var namePers = document.createElement('h2');
         namePers.setAttribute("class","vignette__titre");
         namePers.textContent = this.name;
         vignetteLien.appendChild(namePers);
+        vignette.appendChild(vignetteLien);
         var cityPers = document.createElement('p');
         cityPers.setAttribute("class","vignette__city");
         cityPers.textContent = this.city + ", " + this.country;
-        vignetteLien.appendChild(cityPers);
+        vignette.appendChild(cityPers);
         var taglinePers = document.createElement('p');
         taglinePers.setAttribute("class","vignette__tagline");
         taglinePers.textContent = this.tagline;
-        vignetteLien.appendChild(taglinePers);
+        vignette.appendChild(taglinePers);
         var pricePers = document.createElement('p');
         pricePers.setAttribute("class","vignette__price");
         pricePers.textContent = this.price + '€/jour';
+        vignette.appendChild(pricePers);
         var tagPers = document.createElement('form');
         tagPers.setAttribute("class","form__option");
         for (var j = 0; j < tags.length; j++) {
             var listItem = document.createElement('div');
             listItem.setAttribute("class","btn__option");
-            var inputItem = document.createElement('input');
-                inputItem.setAttribute("class","input__option");
-                inputItem.setAttribute("type","checkbox");
-                inputItem.setAttribute("name","option");
-                inputItem.setAttribute("value",tags[j]);
-            var labelItem = document.createElement('label');
+            var labelItem = document.createElement('span');
                 labelItem.setAttribute("class","label__option");
-                labelItem.setAttribute("for",tags[j]);
-                var span = document.createElement('span');
-                span.textContent = "#"+tags[j];
-                labelItem.appendChild(span);
-            listItem.appendChild(inputItem);
+                labelItem.setAttribute("role","button");
+                labelItem.setAttribute("tabindex","0");
+                labelItem.setAttribute("aria-checked","false");
+                labelItem.setAttribute("aria-label",tags[j]);
+                labelItem.setAttribute("id",tags[j]+'-'+this.id);
+                labelItem.textContent = "#"+tags[j];
             listItem.appendChild(labelItem);    
             tagPers.appendChild(listItem);
         }
-        vignette.appendChild(vignetteLien);
         vignette.appendChild(tagPers);
         section.appendChild(vignette);
     }
@@ -118,33 +120,41 @@ function vignetPhotographers(jsonObj){
 }
 
 //écouteur sélection spécialité des photographers
-const option = document.querySelectorAll("input[type=checkbox]");
+var option = document.querySelectorAll("span[class=label__option]");
 var optionValue;
-for ( var cbx =0; cbx<option.length; cbx++) {
-    option[cbx].addEventListener('click',function(eventOption){
-        var checkedVerif = eventOption.target.getAttribute("checked",true);
-        for(var cbx2 = 0; cbx2<option.length;cbx2++){
-            if (option[cbx2].getAttribute("checked")){
-            option[cbx2].setAttribute("checked",false);
-            }
-            if(!checkedVerif){
-                eventOption.target.setAttribute("checked",true);
-                optionValue=eventOption.target.value;
-                while (section.firstChild){
-                    section.removeChild(section.firstChild);
-                };
-                vignetPhotographersSelected(myJsonParse);
-            } else {
-                eventOption.target.removeAttribute("checked",false);
-                optionValue="";
-                while (section.firstChild){
-                    section.removeChild(section.firstChild);
-                };
-                vignetPhotographers(myJsonParse);
-            }
+
+option.forEach((btnOption)=>btnOption.addEventListener('click',choix));
+
+var cibleValue;
+
+function choix(eventOption){
+    cibleValue=document.querySelector('#'+eventOption.target.id);
+    var checkedVerif = eventOption.target.getAttribute("aria-checked");
+    optionValue=eventOption.target.id.split('-')[0];
+    for(var cbx2 = 0; cbx2<option.length;cbx2++){
+        if (option[cbx2].getAttribute("aria-checked","true")){
+            option[cbx2].setAttribute("aria-checked","false");
         }
-    })
-};
+    }
+    if(checkedVerif==='false'){
+        while (section.firstChild){
+            section.removeChild(section.firstChild);
+        };
+        vignetPhotographersSelected(myJsonParse);
+        cibleValue.setAttribute("aria-checked","true");
+    } else {
+        cibleValue.setAttribute("aria-checked","false");
+        cibleValue.setAttribute("class","label__option")
+        while (section.firstChild){
+            section.removeChild(section.firstChild);
+        };
+        vignetPhotographers(myJsonParse);
+        console.log(checkedVerif)
+    }
+    optionValue=""
+    option = document.querySelectorAll("span[class=label__option]");
+    option.forEach((btnOption)=>btnOption.addEventListener('click',choix));
+}
 
 function vignetPhotographersSelected (jsonObj){
     var sourceJsonSelect = jsonObj["photographers"];
@@ -195,62 +205,83 @@ function pagePhotographer(jsonObj){
     };
     nav.style.display = "none";
     h1.style.display = "none";
-    retourBtn.style.display='none';
-    var pagePhotographe = document.createElement('article');
-    pagePhotographe.setAttribute("class","page__photographe");
-    var pagePhotographeInfo = document.createElement('div');
+    banner.removeChild(retourBtn);
+
+    var pagePhotographeInfo = document.createElement('article');
     pagePhotographeInfo.setAttribute("class","page__photographe--info");
+    pagePhotographeInfo.setAttribute("role","article")
+    pagePhotographeInfo.setAttribute("aria-Label","Page de "+ sourcePers.name);
     sectionPhotographe.appendChild(pagePhotographeInfo);
     var triMedia = document.createElement('article');
     triMedia.setAttribute("class","tri__medias");
     sectionPhotographe.appendChild(triMedia);
     var plageMedia = document.createElement('article');
     plageMedia.setAttribute("class","plage__media");
+    plageMedia.setAttribute("role","article")
+    plageMedia.setAttribute("aria-Label","Les oeuvres de "+ sourcePers.name);
     sectionPhotographe.appendChild(plageMedia);
-//Header Photographer
+//Présentation Photographer
     var vignetPhotographeInfo1 = document.createElement('div');
     vignetPhotographeInfo1.setAttribute("class","vignet__photographe--info vignet__photographe--label");
-    var namePers = document.createElement('h2');
+    var namePers = document.createElement('h1');
     namePers.setAttribute("class","vignette__titre");
     namePers.textContent = sourcePers.name;
-    vignetPhotographeInfo1.appendChild(namePers);
+    
     var cityPers = document.createElement('p');
     cityPers.setAttribute("class","vignette__city");
     cityPers.textContent = sourcePers.city + ", " + sourcePers.country;
-    vignetPhotographeInfo1.appendChild(cityPers);
+    
     var taglinePers = document.createElement('p');
     taglinePers.setAttribute("class","vignette__tagline");
     taglinePers.textContent = sourcePers.tagline;
-    vignetPhotographeInfo1.appendChild(taglinePers);
-    var tagPers = document.createElement('ul');
+    
+    var tagPers = document.createElement('div');
     for (var j = 0; j < sourcePers.tags.length; j++) {
-        var listItem = document.createElement('li');
-        listItem.textContent = "#"+sourcePers.tags[j];
+        var listItem = document.createElement('div');
+        listItem.setAttribute("class","btn__option btn__option--pagePh");
+        var labelItem = document.createElement('span');
+            labelItem.setAttribute("class","label__option");
+            labelItem.setAttribute("role","button");
+            labelItem.setAttribute("tabindex","0");
+            labelItem.setAttribute("aria-checked","false");
+            labelItem.setAttribute("aria-label",sourcePers.tags[j]);
+            labelItem.setAttribute("id",sourcePers.tags[j]+'-'+sourcePers.id)+'-2';
+            labelItem.textContent = "#"+sourcePers.tags[j];
+        listItem.appendChild(labelItem);    
         tagPers.appendChild(listItem);
     }
-    vignetPhotographeInfo1.appendChild(tagPers);
     pagePhotographeInfo.appendChild(vignetPhotographeInfo1);
+    vignetPhotographeInfo1.appendChild(namePers);
+    vignetPhotographeInfo1.appendChild(cityPers);
+    vignetPhotographeInfo1.appendChild(taglinePers);
+    vignetPhotographeInfo1.appendChild(tagPers);
+    
+//bouton contact
     var vignetPhotographeInfo2 = document.createElement('div');
     vignetPhotographeInfo2.setAttribute("class","vignet__photographe--info vignet__photographe--btn");
     var btnContact = document.createElement('button');
     btnContact.setAttribute("class","btn__contact");
     btnContact.setAttribute("value","Contactez-moi");
+    btnContact.setAttribute("role","button");
+    btnContact.setAttribute("aria-label","Contactez-moi");
     btnContact.innerText="Contactez-moi";
     vignetPhotographeInfo2.appendChild(btnContact);
     btnContact.addEventListener("click",launchModal);
     pagePhotographeInfo.appendChild(vignetPhotographeInfo2);
+// photo Photographe
     var vignetPhotographeInfo3 = document.createElement('div');
     vignetPhotographeInfo3.setAttribute("class","vignet__photographe--info vignet__photographe--photo");
     var imgPortrait = document.createElement('img');
     imgPortrait.setAttribute("class","vignet__photo");
     imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/Resized/" + sourcePers.portrait);
+    imgPortrait.setAttribute("aria-label", sourcePers.name);
+    imgPortrait.setAttribute("alt","");
     vignetPhotographeInfo3.appendChild(imgPortrait);
     pagePhotographeInfo.appendChild(vignetPhotographeInfo3);
 //bouton de tri (base)
     const triLabel = document.createElement('label');
     triLabel.setAttribute("for","triSelect");
     triLabel.setAttribute("class","tri__label");
-    triLabel.setAttribute("value","");
     triLabel.textContent = "Trier par";
     triMedia.appendChild(triLabel);
     var divMedia = document.createElement('div');
@@ -275,7 +306,7 @@ function pagePhotographer(jsonObj){
     triSelect.appendChild(triOptionTitre);
     divMedia.appendChild(triSelect);
     triMedia.appendChild(divMedia);
-// customisation bouton de tri    
+//bouton de tri (customisation et fonction
     var customSelect = document.getElementsByClassName("custom-select");
     for (var customCompteur = 0; customCompteur < customSelect.length; customCompteur++) {
         var selectCopy = customSelect[customCompteur].getElementsByTagName("select")[0];
@@ -410,15 +441,17 @@ ImageFactory.prototype.createMedia = function(options){
 function VideoFactory(){}
 VideoFactory.prototype = new ImageFactory();
 VideoFactory.prototype.mediaClass=Video;
+
 var mediacompteur;
+
 function plancheImage(){
     totalLike=0;
-if (tableauLikes.length===0){
-    for(var many = 0; many<myJsonParse["media"].length; many++){
-        var media=myJsonParse["media"][many];
-        tableauLikes.push(media.likes);
+    if (tableauLikes.length===0){
+        for(var many = 0; many<myJsonParse["media"].length; many++){
+            var media=myJsonParse["media"][many];
+            tableauLikes.push(media.likes);
+        }
     }
-}
     var plageMedia = document.querySelector('.plage__media');
     plageMedia.innerHTML='';
     var plageMediaMedia = document.createElement('div');
@@ -429,33 +462,34 @@ if (tableauLikes.length===0){
         medias.setAttribute('class','mediasInside');
         var lightboxLien = document.createElement('a');
         if(media.photographerId===sourcePers.id){
+            var image;
+            var typeMedia;
+            var elementMedia;
             if (media.video === undefined){
                 var imageFactory = new ImageFactory();
-                var image = imageFactory.createMedia(media);
-                lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+ "/Resized/" +media.image);
-                lightboxLien.setAttribute('class','lien__media');
-                var photoMedia = document.createElement('img');
-                photoMedia.setAttribute("class","media__photo");
-                photoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/Resized/" + media.image);
-                photoMedia.setAttribute("alt",media.title);
-                lightboxLien.appendChild(photoMedia)
-                medias.appendChild(lightboxLien);
+                image = imageFactory.createMedia(media);
+                typeMedia=image.image;
+                elementMedia = document.createElement('img')
+
             } if(media.image === undefined){
                 var videoFactory = new VideoFactory();
-                var video = videoFactory.createMedia(media);
-                lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + media.video)
-                lightboxLien.setAttribute('class','lien__media');
-                var videoMedia = document.createElement('video');
-                videoMedia.setAttribute("class","media__photo");
-                videoMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + media.video);
-                videoMedia.setAttribute("alt",media.title);
-                lightboxLien.appendChild(videoMedia)
-                medias.appendChild(lightboxLien);
+                image = videoFactory.createMedia(media);
+                typeMedia = image.video;
+                elementMedia = document.createElement('video');
+                elementMedia.setAttribute('poster',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/Resized/" + typeMedia.split('.mp4')[0]+'.jpg');
             }
+            elementMedia.setAttribute("class","media__photo");
+            elementMedia.setAttribute('src',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/Resized/" + typeMedia);
+            elementMedia.setAttribute("alt",image.title);
+            lightboxLien.setAttribute('href',"Images/SamplePhotos/"+sourcePers.name.split(' ')[0]+"/" + typeMedia);
+            lightboxLien.setAttribute('class','lien__media');
+            lightboxLien.setAttribute('aria-label',image.title +', vue agrandie');
+            lightboxLien.appendChild(elementMedia)
+            medias.appendChild(lightboxLien);
             tableauLiens.push(lightboxLien.getAttribute('href'))
             var legendMedia = document.createElement('div');
             legendMedia.setAttribute("class","media__legend");
-            var titreMedia = document.createElement('h3');
+            var titreMedia = document.createElement('h2');
             titreMedia.setAttribute("class","media__titre");
             titreMedia.textContent = media.title;
             tableauTitres.push(media.title);
@@ -466,6 +500,7 @@ if (tableauLikes.length===0){
             likeMediaCount.setAttribute("class","media__like");
             var heart = document.createElement('i');
             heart.setAttribute("class","fas fa-heart");
+            heart.setAttribute("aria-label","likes");
             heart.setAttribute('data-compteur',mediacompteur);
             plusLikes(tableauLikes[mediacompteur])
             totalLike = totalLike + tableauLikes[mediacompteur];
@@ -485,9 +520,10 @@ if (tableauLikes.length===0){
     var likeTotal = document.createElement('p');    
     likeTotal.textContent = totalLike;
     likeBottom.appendChild(likeTotal)
-    var heart = document.createElement('i');
-    heart.setAttribute("class","fas fa-heart");
-    likeBottom.appendChild(heart)
+    var heartBottom = document.createElement('i');
+    heartBottom.setAttribute("class","fas fa-heart");
+    heartBottom.setAttribute("aria-label","likes");
+    likeBottom.appendChild(heartBottom)
     mediaBottom.appendChild(likeBottom);
     var pricePers = document.createElement('p');
     pricePers.setAttribute("class","media__price");
@@ -530,15 +566,23 @@ function lightbox(jsonObj){
     var titre;
     const lightboxDiv= document.createElement('div');
     lightboxDiv.classList.add('lightbox');
+    lightboxDiv.setAttribute('role','Dialog');
+    lightboxDiv.setAttribute('aria-label','image agrandie');
     sectionPhotographe.appendChild(lightboxDiv);
     const lightboxClose= document.createElement('button');
     lightboxClose.classList.add('lightbox__close');
+    lightboxClose.setAttribute('role','button');
+    lightboxClose.setAttribute('aria-label','Ferme la fenêtre');
     lightboxDiv.appendChild(lightboxClose);
     const lightboxNext= document.createElement('button');
     lightboxNext.classList.add('lightbox__next');
+    lightboxNext.setAttribute('role','button');
+    lightboxNext.setAttribute('aria-label',"Va à l'image suivante");
     lightboxDiv.appendChild(lightboxNext);
     const lightboxPrev= document.createElement('button');
     lightboxPrev.classList.add('lightbox__prev');
+    lightboxPrev.setAttribute('role','button');
+    lightboxPrev.setAttribute('aria-label',"Va à l'image précédente");
     lightboxDiv.appendChild(lightboxPrev);
     const container= document.createElement('div');
     container.classList.add('lightbox__container');
@@ -562,7 +606,8 @@ function lightbox(jsonObj){
             imageSrc.src = sourceLightbox;
             image.appendChild(imageSrc)
         }
-        titre = document.createElement('h4');
+        titre = document.createElement('h2');
+        titre.setAttribute('class','media__titre')
         titre.textContent = tableauTitres[index]
         container.innerHTML='';
         containerElement.innerHTML='';
@@ -570,28 +615,46 @@ function lightbox(jsonObj){
         containerElement.appendChild(titre);
         container.appendChild(containerElement)
     }
-    lightboxClose.addEventListener('click', function closeLightbox(e){
-        e.preventDefault();
+
+    document.addEventListener('keyup',logKey);
+    
+    function logKey(e){    
+        if(e.code=="Escape"){
+            closeLightbox()
+        }
+        if(e.code=="ArrowRight"){
+            nextLightbox()
+        }if(e.code=="ArrowLeft"){
+            prevLightbox()
+        }
+    }
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightboxNext.addEventListener('click',nextLightbox);
+    lightboxPrev.addEventListener('click', prevLightbox);
+
+    function closeLightbox(e){
         sectionPhotographe.removeChild(lightboxDiv);
-    })
-    lightboxNext.addEventListener('click',function nextLightbox (e){
-        e.preventDefault()
+        document.removeEventListener('keyup',logKey)
+    }
+
+    function nextLightbox (e){
         if (index === tableauLiens.length -1){
             index = -1
         }
         index++
         sourceLightbox = tableauLiens[index]
         loadImage()
-    })
-    lightboxPrev.addEventListener('click', function prevLightbox(e){
-        e.preventDefault();
+    }
+
+    function prevLightbox(e){
         if (index === 0){
             index = tableauLiens.length
         }
         index--
         sourceLightbox = tableauLiens[index]
         loadImage()
-    })
+    }
 };
 
 //effet bouton contactez-moi

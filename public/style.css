@@ -49,25 +49,6 @@ h1{
     align-items: center;
     box-sizing: border-box;
 }
-.passe{
-    position:fixed;
-    top:-50vh;
-    left:50%;
-    margin-left: -91px;
-    cursor: pointer;
-    width: 182px;
-    height: 30px;
-    background-color:#DB8876;
-    color:#000000;
-    border-radius: 5px;
-    font-size: 18px;
-    text-decoration: none;
-    text-align: center;
-    display: flex;
-    padding-top: 2px;
-    align-items: center;
-    box-sizing: border-box;
-}
 
 /*boutons de sélection*/
 .nav{
@@ -101,7 +82,10 @@ h1{
     display: flex;
     justify-content: center;
 }
-.label__option, .label__option--inactif{
+.btn__option--pagePh{
+    margin-right:10%;
+}
+.label__option{
     border: 0.5px solid #C4C4C4;
     border-radius: 11px;
     display: inline-block;
@@ -113,11 +97,9 @@ h1{
     font-family: "DM sans", arial;
     color:#901C1C;
     text-align: center;
-}
-.label__option{
     cursor:pointer;
 }
-.label__option:focus,
+
 .label__option:hover{
     background-color: #DB8876;
     color:#000000;
@@ -142,10 +124,11 @@ main{
     flex-wrap: wrap;
     justify-content: space-around;
 }
+.vignette__container{
+    margin: 2%;
+}
 .vignette{
     cursor: pointer;
-}
-.vignette, article{
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -191,7 +174,7 @@ main{
     color:#757575;
     text-align: center;
 }
-
+/*
 .page__photographe--info ul {
     width: 100%;
     height: auto;
@@ -221,7 +204,7 @@ main{
     color:#901C1C;
     text-align: center;
 }
-
+*/
 #sectionPhotographe{
     width: 85%;
     margin: auto;
@@ -302,11 +285,11 @@ main{
     margin-top:5px;
     cursor: pointer;
 }
-/*.btn__contact:focus,
+
 .btn__contact:hover{
     background-color: #DB8876;
     color:#000000;
-}*/
+}
 .plage__media, .tri__medias{
     width: 100%;
     display: flex;
@@ -419,7 +402,7 @@ main{
     width: 100%;
     height: auto;
 }
-h3{
+.media__titre{
     margin: 0;
     font-size : 24px;
 }
