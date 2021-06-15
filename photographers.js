@@ -156,6 +156,8 @@ function choix(eventOption){
     optionValue=""
     option = document.querySelectorAll("span[class=label__option]");
     option.forEach((btnOption)=>btnOption.addEventListener('click',choix));
+    var vignettePhotographe = document.querySelectorAll('.vignette')
+    vignettePhotographe[0].focus()
 }
 
 document.addEventListener('keyup',generalKey);
@@ -346,13 +348,14 @@ function pagePhotographer(jsonObj){
         selectSelected.setAttribute('tabindex','0');
         selectSelected.setAttribute('aria-label','tri');
         selectSelected.setAttribute('aria-haspopup','true');
-        selectSelected.setAttribute('aria-expanded','false')
+        selectSelected.setAttribute('aria-expanded','false');
         selectSelected.innerHTML = selectCopy.options[selectCopy.selectedIndex].innerHTML;
         customSelect[customCompteur].appendChild(selectSelected);
-        selectItems = document.createElement("DIV");
+        selectItems = document.createElement("div");
         selectItems.setAttribute("class", "select-items select-hide");
+    
         for (var selectCopyI = 1; selectCopyI < selectCopy.length; selectCopyI++) {
-            var optionElement = document.createElement("DIV");
+            var optionElement = document.createElement("div");
             optionElement.setAttribute("role", "button");
             optionElement.setAttribute("tabindex", "0");
             optionElement.setAttribute("aria-label", "option");
@@ -401,13 +404,14 @@ function pagePhotographer(jsonObj){
             selectItems.appendChild(optionElement);
         }
         customSelect[customCompteur].appendChild(selectItems);
-        selectSelected.addEventListener("click", function(e) {
+        selectSelected.addEventListener("click", actionTri);
+        selectSelected.addEventListener("keyup", actionTri);
+        function actionTri(e) {
             e.stopPropagation();
             closeAllSelect(this);
             this.nextSibling.classList.toggle("select-hide");
             this.classList.toggle("select-arrow-active");
-        });
-
+        };
         selectItems.addEventListener("click",optionTri);
     }
     function closeAllSelect(elmnt) {
@@ -706,6 +710,8 @@ function lightbox(jsonObj){
     function closeLightbox(e){
         sectionPhotographe.removeChild(lightboxDiv);
         document.removeEventListener('keyup',logKey)
+        var btnContact=document.querySelector('.btn__contact')
+        btnContact.focus()
     }
 
     function nextLightbox (e){
@@ -829,6 +835,13 @@ function launchModal(){
         const closeBtnModal = document.querySelector(".btn-close");
         closeBtnModal.addEventListener('click',closeModal);
     }
+    document.addEventListener('keyup',modalKey);
+}
+
+function modalKey(e){    
+    if(e.code=="Escape"){
+        closeModal()
+    }
 }
 
 function closeModal() {
@@ -840,6 +853,8 @@ function closeModal() {
     triMedia.style.display="flex";
     var plageMedia = document.querySelector('.plage__media')
     plageMedia.style.display="flex";
+    var logo=document.querySelector('#logo')
+    logo.focus()
 }
 
 function control(){
@@ -920,18 +935,22 @@ function validate(){
     if (firstValue == null || firstValue == "" || firstValue == undefined){
         document.querySelector('#first').parentNode.setAttribute("data-error-visible",true);
         document.querySelector('#first').parentNode.setAttribute("data-error","Merci d'indiquer votre prénom");
+        document.querySelector('#first').focus()
         return false;
     } else if (lastValue == null || lastValue == "" || lastValue == undefined){
         document.querySelector('#last').parentNode.setAttribute("data-error-visible",true);
         document.querySelector('#last').parentNode.setAttribute("data-error","Merci d'indiquer votre nom");
+        document.querySelector('#last').focus()
         return false;
     } else if (emailValue == null || emailValue == "" || emailValue == undefined){
         document.querySelector('#email').parentNode.setAttribute("data-error-visible",true);
         document.querySelector('#email').parentNode.setAttribute("data-error","Merci d'indiquer votre email");
+        document.querySelector('#email').focus()
         return false;
     } else if (messageValue == null || messageValue == "" || messageValue == undefined){
         document.querySelector('#message').parentNode.setAttribute("data-error-visible",true);
         document.querySelector('#message').parentNode.setAttribute("data-error","Merci d'indiquer votre message");
+        document.querySelector('#message').focus()
         return false;
     } else {
         form.style.display = "none";
