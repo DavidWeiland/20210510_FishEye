@@ -97,10 +97,10 @@ function Photographers(name){
             listItem.setAttribute("class","btn__option");
             var labelItem = document.createElement('span');
                 labelItem.setAttribute("class","label__option");
-                labelItem.setAttribute("role","button");
+                labelItem.setAttribute("role","link");
                 labelItem.setAttribute("tabindex","0");
                 labelItem.setAttribute("aria-checked","false");
-                labelItem.setAttribute("aria-label",tags[j]);
+                labelItem.setAttribute("aria-label","tag "+tags[j]);
                 labelItem.setAttribute("id",tags[j]+'-'+this.id);
                 labelItem.textContent = "#"+tags[j];
             listItem.appendChild(labelItem);    
@@ -236,7 +236,7 @@ function pagePhotographer(jsonObj){
         section.removeChild(section.firstChild);
     };
     nav.style.display = "none";
-    h1.style.opacity = "0";
+    h1.style.display = "none";
     ratio = 0;
 
     var pagePhotographeInfo = document.createElement('article');
@@ -273,10 +273,10 @@ function pagePhotographer(jsonObj){
         listItem.setAttribute("class","btn__option btn__option--pagePh");
         var labelItem = document.createElement('span');
             labelItem.setAttribute("class","label__option");
-            labelItem.setAttribute("role","button");
+            labelItem.setAttribute("role","link");
             //labelItem.setAttribute("tabindex","0");
             labelItem.setAttribute("aria-checked","false");
-            labelItem.setAttribute("aria-label",sourcePers.tags[j]);
+            labelItem.setAttribute("aria-label","tag "+sourcePers.tags[j]);
             labelItem.setAttribute("id",sourcePers.tags[j]+'-'+sourcePers.id)+'-2';
             labelItem.textContent = "#"+sourcePers.tags[j];
         listItem.appendChild(labelItem);    
@@ -295,6 +295,7 @@ function pagePhotographer(jsonObj){
     btnContact.setAttribute("class","btn__contact");
     btnContact.setAttribute("value","Contactez-moi");
     btnContact.setAttribute("role","button");
+    btnContact.setAttribute("tabindex","0");
     btnContact.setAttribute("aria-label","Contactez-moi");
     btnContact.innerText="Contactez-moi";
     vignetPhotographeInfo2.appendChild(btnContact);
@@ -307,7 +308,7 @@ function pagePhotographer(jsonObj){
     imgPortrait.setAttribute("class","vignet__photo");
     imgPortrait.setAttribute("src","Images/SamplePhotos/PhotographersIdPhotos/Resized/" + sourcePers.portrait);
     imgPortrait.setAttribute("aria-label", sourcePers.name);
-    imgPortrait.setAttribute("alt","");
+    imgPortrait.setAttribute("alt",sourcePers.name);
     vignetPhotographeInfo3.appendChild(imgPortrait);
     pagePhotographeInfo.appendChild(vignetPhotographeInfo3);
 //bouton de tri (base)
@@ -342,7 +343,7 @@ function pagePhotographer(jsonObj){
     var customSelect = document.getElementsByClassName("custom-select");
     for (var customCompteur = 0; customCompteur < customSelect.length; customCompteur++) {
         var selectCopy = customSelect[customCompteur].getElementsByTagName("select")[0];
-        selectSelected = document.createElement("DIV");
+        selectSelected = document.createElement("div");
         selectSelected.setAttribute("class", "select-selected");
         selectSelected.setAttribute('role','button');
         selectSelected.setAttribute('tabindex','0');
@@ -680,6 +681,7 @@ function lightbox(jsonObj){
             imageSrc.src = sourceLightbox;
             image.appendChild(imageSrc)
         }
+        image.setAttribute('alt', tableauTitres[index])
         titre = document.createElement('h2');
         titre.setAttribute('class','media__titre')
         titre.textContent = tableauTitres[index]
@@ -741,14 +743,11 @@ var messageValue;
 
 function launchModal(){
     var btnContact=document.querySelector('.btn__contact')
-    btnContact.blur()
-    var pagePhotographeInfo = document.querySelector('.page__photographe--info')
-    pagePhotographeInfo.style.display="none";
-    var triMedia = document.querySelector('.tri__medias')
-    triMedia.style.display="none";
-    var plageMedia = document.querySelector('.plage__media')
-    plageMedia.style.display="none";
-    
+    btnContact.setAttribute("tabindex","-1");
+    btnContact.blur();
+    document.querySelector('.select-selected').setAttribute('tabindex','-1');
+    document.querySelectorAll('.lien__media').forEach((tabLien)=>tabLien.setAttribute('tabindex','-1'))
+
     const modalBg = document.createElement('div');
     modalBg.setAttribute("class","bground");
     sectionPhotographe.appendChild(modalBg);
@@ -759,7 +758,7 @@ function launchModal(){
         const enteteModal = document.createElement('div');
         enteteModal.setAttribute("class","entete-modal");
         content.appendChild(enteteModal);
-        enteteModal.innerHTML = "<h4 class='titre-modal'>Contactez-moi</br>"+sourcePers.name+"</h4>";
+        enteteModal.innerHTML = "<h2 class='titre-modal'>Contactez-moi</br>"+sourcePers.name+"</h2>";
         const close = document.createElement('span');
         close.setAttribute("class","close");
         enteteModal.appendChild(close);
@@ -777,7 +776,7 @@ function launchModal(){
         const formDataPrenom = document.createElement('div');
         formDataPrenom.setAttribute("class","formData");
         formModal.appendChild(formDataPrenom);
-        formDataPrenom.innerHTML = "<label for='first'>Prénom</label></br>";
+        formDataPrenom.innerHTML = "<label for='first' id='firstLabel'>Prénom</label></br>";
         const inputPrenom = document.createElement('input');
         inputPrenom.focus();
         inputPrenom.setAttribute("class","text-control");
@@ -785,43 +784,45 @@ function launchModal(){
         inputPrenom.setAttribute("id","first");
         inputPrenom.setAttribute("name","first");
         inputPrenom.setAttribute("tabindex","0");
+        inputPrenom.setAttribute("labelledby",'firstLabel')
 
         formDataPrenom.appendChild(inputPrenom);
         const formDataNom = document.createElement('div');
         formDataNom.setAttribute("class","formData");
         formModal.appendChild(formDataNom);
-        formDataNom.innerHTML = "<label for='last'>Nom</label></br>";
+        formDataNom.innerHTML = "<label for='last' id='lastLabel'>Nom</label></br>";
         const inputNom = document.createElement('input');
         inputNom.setAttribute("class","text-control");
         inputNom.setAttribute("type","text");
         inputNom.setAttribute("id","last");
         inputNom.setAttribute("name","last");
         inputNom.setAttribute("tabindex","0");
-
+        inputNom.setAttribute("labelledby",'lastLabel')
         formDataNom.appendChild(inputNom);
         const formDataMail = document.createElement('div');
         formDataMail.setAttribute("class","formData");
         formModal.appendChild(formDataMail);
-        formDataMail.innerHTML = "<label for='email'>Email</label></br>";
+        formDataMail.innerHTML = "<label for='email' id='emailLabel'>Email</label></br>";
         const inputMail = document.createElement('input');
         inputMail.setAttribute("class","text-control");
         inputMail.setAttribute("type","email");
         inputMail.setAttribute("id","email");
         inputMail.setAttribute("name","email");
         inputMail.setAttribute("tabindex","0");
+        inputMail.setAttribute("labelledby",'emailLabel')
 
         formDataMail.appendChild(inputMail);
         const formDataMessage = document.createElement('div');
         formDataMessage.setAttribute("class","formData");
         formModal.appendChild(formDataMessage);
-        formDataMessage.innerHTML = "<label for='message'>Votre Message</label></br>";
+        formDataMessage.innerHTML = "<label for='message' id='messageLabel'>Votre Message</label></br>";
         const inputMessage = document.createElement('textarea');
         inputMessage.setAttribute("class","text-control");
-        inputMessage.setAttribute("rows","1");
+        //inputMessage.setAttribute("rows","1");
         inputMessage.setAttribute("id","message");
         inputMessage.setAttribute("name","message");
         inputMessage.setAttribute("tabindex","0");
-
+        inputMessage.setAttribute("labelledby",'messageLabel')
         formDataMessage.appendChild(inputMessage);
         const btnEnvoi = document.createElement('button');
         btnEnvoi.setAttribute("class","button btn__submit");
@@ -831,7 +832,7 @@ function launchModal(){
         formModal.appendChild(btnEnvoi);
         control();
     }else{
-        content.innerHTML = "<h4 class='message-modal'>Vous avez déjà envoyé un message à "+sourcePers.name+"</h4><button class='btn-close btn__contact' value='Close'>Close</button>"
+        content.innerHTML = "<h2 class='message-modal'>Vous avez déjà envoyé un message à "+sourcePers.name+"</h2><button class='btn-close btn__contact' value='Close'>Close</button>"
         const closeBtnModal = document.querySelector(".btn-close");
         closeBtnModal.addEventListener('click',closeModal);
     }
@@ -847,12 +848,12 @@ function modalKey(e){
 function closeModal() {
     const modalBg = document.querySelector(".bground");
     sectionPhotographe.removeChild(modalBg);
-    var pagePhotographeInfo = document.querySelector('.page__photographe--info')
-    pagePhotographeInfo.style.display="flex";
-    var triMedia = document.querySelector('.tri__medias')
-    triMedia.style.display="flex";
-    var plageMedia = document.querySelector('.plage__media')
-    plageMedia.style.display="flex";
+    var btnContact=document.querySelector('.btn__contact')
+    btnContact.setAttribute("tabindex","0");
+    var selectSelected=document.querySelector('.select-selected');
+    selectSelected.setAttribute('tabindex','0');
+    var lightboxLien = document.querySelectorAll('.lien__media');
+    lightboxLien.forEach((tabLien)=>tabLien.setAttribute('tabindex','0'))
     var logo=document.querySelector('#logo')
     logo.focus()
 }
@@ -955,7 +956,7 @@ function validate(){
     } else {
         form.style.display = "none";
         enteteModal.style.opacity ="0";
-        modalBody.innerHTML = "<h4 class='message-modal'>Merci !<br/><br/>Votre demande a bien été envoyée à "+sourcePers.name+"</h4><button class='btn-close btn__contact' value='Close'>Close</button>"
+        modalBody.innerHTML = "<h2 class='message-modal'>Merci !<br/><br/>Votre demande a bien été envoyée à "+sourcePers.name+"</h2><button class='btn-close btn__contact' value='Close'>Close</button>"
         constructionForm()
         const closeBtnModal = document.querySelector(".btn-close");
         closeBtnModal.addEventListener('click',closeModal);
