@@ -20,7 +20,7 @@ const section = document.querySelector('#section');
 const sectionPhotographe = document.querySelector('#sectionPhotographe');
 const nav = document.querySelector('.nav');
 const h1 = document.querySelector('h1');
-var retourBtn;
+var retourBtn = document.querySelector('.retour');
 const banner = document.querySelector('.banner');
 
 
@@ -32,28 +32,16 @@ var interOptions = {
     threshold: ratio
 }
 
-function btnRetour(){
-    retourBtn=document.createElement('a');
-    retourBtn.setAttribute('tabindex','0');
-    retourBtn.setAttribute('role','link');
-    retourBtn.setAttribute('aria-label','passer le tri');
-    retourBtn.setAttribute('href','#section');
-    retourBtn.setAttribute('class','retour');
-    retourBtn.innerText="Passer au contenu";
-    banner.appendChild(retourBtn);
-}
-
 function interDo(entries, observer){
     entries.forEach(function(entry){
         if(entry.intersectionRatio < ratio){
-            btnRetour();
+            retourBtn.setAttribute('class','retour');
         }else{
-            retourBtn.style.display ='none'
+            retourBtn.setAttribute('class','sr-only');
         }
     })
 }
 
-retourBtn = document.querySelector('.retour');
 
 var observer = new IntersectionObserver (interDo, interOptions);
 var interTarget = h1;
@@ -164,7 +152,6 @@ function choix(eventOption){
             section.removeChild(section.firstChild);
         };
         vignetPhotographers(myJsonParse);
-        console.log(checkedVerif)
     }
     optionValue=""
     option = document.querySelectorAll("span[class=label__option]");
@@ -174,16 +161,21 @@ function choix(eventOption){
 document.addEventListener('keyup',generalKey);
 
 function generalKey(e){ 
-    e.preventDefault()
-    var ciblePhotog=e.target.getAttribute('role')
+    //e.preventDefault()
+    var ciblePhotog=e.target.getAttribute('class')
     if(e.code=="Enter"){
-        console.log(ciblePhotog)
         switch (ciblePhotog){
-            case "button" :
+            case "label__option" :
                 choix(e);
                 break;
-            case "link" :
+            case "vignette" :
                 pagePhotographer(myJsonParse.photographers[e.target.getAttribute('data-cible')]);
+                break;
+            case "same-as-selected" :
+                optionTri(e)
+                break;
+            case "lien__media" :
+                lightbox(tableauLiens[e.target.getAttribute('data-cible')])
                 break;
         }
     }
@@ -195,8 +187,6 @@ function vignetPhotographersSelected (jsonObj){
     };
     nav.style.display = "block";
     h1.style.display = "block";
-    btnRetour()
-
     var sourceJsonSelect = jsonObj["photographers"];
     for (i = 0; i < sourceJsonSelect.length; i++) {
         var tags = sourceJsonSelect[i].tags;
@@ -245,7 +235,7 @@ function pagePhotographer(jsonObj){
     };
     nav.style.display = "none";
     h1.style.opacity = "0";
-    banner.removeChild(retourBtn);
+    ratio = 0;
 
     var pagePhotographeInfo = document.createElement('article');
     pagePhotographeInfo.setAttribute("class","page__photographe--info");
@@ -282,7 +272,7 @@ function pagePhotographer(jsonObj){
         var labelItem = document.createElement('span');
             labelItem.setAttribute("class","label__option");
             labelItem.setAttribute("role","button");
-            labelItem.setAttribute("tabindex","0");
+            //labelItem.setAttribute("tabindex","0");
             labelItem.setAttribute("aria-checked","false");
             labelItem.setAttribute("aria-label",sourcePers.tags[j]);
             labelItem.setAttribute("id",sourcePers.tags[j]+'-'+sourcePers.id)+'-2';
@@ -346,20 +336,30 @@ function pagePhotographer(jsonObj){
     triSelect.appendChild(triOptionTitre);
     divMedia.appendChild(triSelect);
     triMedia.appendChild(divMedia);
-//bouton de tri (customisation et fonction
+//bouton de tri (customisation et fonction)
     var customSelect = document.getElementsByClassName("custom-select");
     for (var customCompteur = 0; customCompteur < customSelect.length; customCompteur++) {
         var selectCopy = customSelect[customCompteur].getElementsByTagName("select")[0];
         selectSelected = document.createElement("DIV");
         selectSelected.setAttribute("class", "select-selected");
+        selectSelected.setAttribute('role','button');
+        selectSelected.setAttribute('tabindex','0');
+        selectSelected.setAttribute('aria-label','tri');
+        selectSelected.setAttribute('aria-haspopup','true');
+        selectSelected.setAttribute('aria-expanded','false')
         selectSelected.innerHTML = selectCopy.options[selectCopy.selectedIndex].innerHTML;
         customSelect[customCompteur].appendChild(selectSelected);
         selectItems = document.createElement("DIV");
         selectItems.setAttribute("class", "select-items select-hide");
         for (var selectCopyI = 1; selectCopyI < selectCopy.length; selectCopyI++) {
             var optionElement = document.createElement("DIV");
+            optionElement.setAttribute("role", "button");
+            optionElement.setAttribute("tabindex", "0");
+            optionElement.setAttribute("aria-label", "option");
             optionElement.innerHTML = selectCopy.options[selectCopyI].innerHTML;
-            optionElement.addEventListener("click", function(e) {
+            optionElement.addEventListener("click", trier);
+
+            function trier() {
                 selectOrigine = this.parentNode.parentNode.getElementsByTagName("select")[0];
                 var selectOrigineCiblePrev = this.parentNode.previousSibling;
                 for (var conpteurSelectOrigine = 0; conpteurSelectOrigine < selectOrigine.length; conpteurSelectOrigine++) {
@@ -376,7 +376,28 @@ function pagePhotographer(jsonObj){
                     }
                 }
                 selectOrigineCiblePrev.click();
-            });
+            };
+
+            optionElement.addEventListener("keyup", function (e) {
+                if(e.code=="Enter"){
+                    selectOrigine = this.parentNode.parentNode.getElementsByTagName("select")[0];
+                var selectOrigineCiblePrev = this.parentNode.previousSibling;
+                for (var conpteurSelectOrigine = 0; conpteurSelectOrigine < selectOrigine.length; conpteurSelectOrigine++) {
+                    if (selectOrigine.options[conpteurSelectOrigine].innerHTML == this.innerHTML) {
+                        selectOrigine.selectedIndex = conpteurSelectOrigine;
+                        selectOrigineCiblePrev.innerHTML = this.innerHTML;
+                        var sameSelected = this.parentNode.getElementsByClassName("same-as-selected");
+                        triValue = document.querySelector("#triSelect").value;
+                        for (compteurSelectOrigine = 0; compteurSelectOrigine < sameSelected.length; compteurSelectOrigine++) {
+                            sameSelected[compteurSelectOrigine].removeAttribute("class");
+                        }
+                        this.setAttribute("class", "same-as-selected");
+                        break;
+                    }
+                }
+                selectOrigineCiblePrev.click();
+            };
+                })
             selectItems.appendChild(optionElement);
         }
         customSelect[customCompteur].appendChild(selectItems);
@@ -386,37 +407,8 @@ function pagePhotographer(jsonObj){
             this.nextSibling.classList.toggle("select-hide");
             this.classList.toggle("select-arrow-active");
         });
-        selectItems.addEventListener("click",function(event){
-            event.stopPropagation();
-            if (triValue === "popularité"){ 
-                myJsonParse["media"].sort(function(a,b){
-                    return a.likes-b.likes;
-                    });
-            } else if (triValue === 'titre'){
-                myJsonParse["media"].sort(function compare(a,b){
-                    if(a.title < b.title)
-                        return-1;
-                    if(a.title>b.title)
-                        return 1;
-                    return 0;
-                });
-            } else if (triValue === 'date'){
-                myJsonParse["media"].sort(function compare(a,b){
-                    if(a.date < b.date)
-                        return-1;
-                    if(a.date>b.date)
-                        return 1;
-                    return 0;
-                });
-            }
-            while (plageMedia.firstChild){
-                plageMedia.removeChild(plageMedia.firstChild);
-            }
-            tableauLiens = [];
-            tableauTitres = [];
-            tableauLikes = [];
-            plancheImage();
-        });
+
+        selectItems.addEventListener("click",optionTri);
     }
     function closeAllSelect(elmnt) {
         var i, arrNo = [];
@@ -438,6 +430,39 @@ function pagePhotographer(jsonObj){
     document.addEventListener("click", closeAllSelect);
 //planche medias
     plancheImage()
+};
+
+function optionTri(event){
+    event.stopPropagation();
+    if (triValue === "popularité"){ 
+        myJsonParse["media"].sort(function(a,b){
+            return a.likes-b.likes;
+            });
+    } else if (triValue === 'titre'){
+        myJsonParse["media"].sort(function compare(a,b){
+            if(a.title < b.title)
+                return-1;
+            if(a.title>b.title)
+                return 1;
+            return 0;
+        });
+    } else if (triValue === 'date'){
+        myJsonParse["media"].sort(function compare(a,b){
+            if(a.date < b.date)
+                return-1;
+            if(a.date>b.date)
+                return 1;
+            return 0;
+        });
+    }
+    var plageMedia = document.querySelector(".plage__media")
+    while (plageMedia.firstChild){
+        plageMedia.removeChild(plageMedia.firstChild);
+    }
+    tableauLiens = [];
+    tableauTitres = [];
+    tableauLikes = [];
+    plancheImage();
 };
 
 var triValue="";
@@ -501,6 +526,9 @@ function plancheImage(){
         var medias = document.createElement('div');
         medias.setAttribute('class','mediasInside');
         var lightboxLien = document.createElement('a');
+        lightboxLien.setAttribute('role','link')
+        lightboxLien.setAttribute('tabindex','0')
+
         if(media.photographerId===sourcePers.id){
             var image;
             var typeMedia;
@@ -572,6 +600,7 @@ function plancheImage(){
     const links = document.querySelectorAll('.lien__media');
     for(var j=0;j<links.length;j++){
         links[j].removeAttribute('href');
+        links[j].setAttribute('data-cible',j)
         links[j].setAttribute('onclick', 'return lightbox(tableauLiens['+j+'])')
     }
     const hearts = document.querySelectorAll('.fa-heart');
@@ -585,6 +614,7 @@ function plancheImage(){
             likeMediaCount.setAttribute("class","media__like");
             likeMediaCount.textContent=''
             sourceLikes = tableauLikes[likeIndice]
+            sectionPhotographe.removeChild(mediaBottom);
             plancheImage(sourceLikes)
     })}
 };
@@ -704,6 +734,15 @@ var emailValue;
 var messageValue;
 
 function launchModal(){
+    var btnContact=document.querySelector('.btn__contact')
+    btnContact.blur()
+    var pagePhotographeInfo = document.querySelector('.page__photographe--info')
+    pagePhotographeInfo.style.display="none";
+    var triMedia = document.querySelector('.tri__medias')
+    triMedia.style.display="none";
+    var plageMedia = document.querySelector('.plage__media')
+    plageMedia.style.display="none";
+    
     const modalBg = document.createElement('div');
     modalBg.setAttribute("class","bground");
     sectionPhotographe.appendChild(modalBg);
@@ -734,10 +773,13 @@ function launchModal(){
         formModal.appendChild(formDataPrenom);
         formDataPrenom.innerHTML = "<label for='first'>Prénom</label></br>";
         const inputPrenom = document.createElement('input');
+        inputPrenom.focus();
         inputPrenom.setAttribute("class","text-control");
         inputPrenom.setAttribute("type","text");
         inputPrenom.setAttribute("id","first");
         inputPrenom.setAttribute("name","first");
+        inputPrenom.setAttribute("tabindex","0");
+
         formDataPrenom.appendChild(inputPrenom);
         const formDataNom = document.createElement('div');
         formDataNom.setAttribute("class","formData");
@@ -748,6 +790,8 @@ function launchModal(){
         inputNom.setAttribute("type","text");
         inputNom.setAttribute("id","last");
         inputNom.setAttribute("name","last");
+        inputNom.setAttribute("tabindex","0");
+
         formDataNom.appendChild(inputNom);
         const formDataMail = document.createElement('div');
         formDataMail.setAttribute("class","formData");
@@ -758,6 +802,8 @@ function launchModal(){
         inputMail.setAttribute("type","email");
         inputMail.setAttribute("id","email");
         inputMail.setAttribute("name","email");
+        inputMail.setAttribute("tabindex","0");
+
         formDataMail.appendChild(inputMail);
         const formDataMessage = document.createElement('div');
         formDataMessage.setAttribute("class","formData");
@@ -765,9 +811,11 @@ function launchModal(){
         formDataMessage.innerHTML = "<label for='message'>Votre Message</label></br>";
         const inputMessage = document.createElement('textarea');
         inputMessage.setAttribute("class","text-control");
-        inputMessage.setAttribute("rows","4");
+        inputMessage.setAttribute("rows","1");
         inputMessage.setAttribute("id","message");
         inputMessage.setAttribute("name","message");
+        inputMessage.setAttribute("tabindex","0");
+
         formDataMessage.appendChild(inputMessage);
         const btnEnvoi = document.createElement('button');
         btnEnvoi.setAttribute("class","button btn__submit");
@@ -786,6 +834,12 @@ function launchModal(){
 function closeModal() {
     const modalBg = document.querySelector(".bground");
     sectionPhotographe.removeChild(modalBg);
+    var pagePhotographeInfo = document.querySelector('.page__photographe--info')
+    pagePhotographeInfo.style.display="flex";
+    var triMedia = document.querySelector('.tri__medias')
+    triMedia.style.display="flex";
+    var plageMedia = document.querySelector('.plage__media')
+    plageMedia.style.display="flex";
 }
 
 function control(){
@@ -890,31 +944,24 @@ function validate(){
     }
 };
 
-var envoiForm=[]
-
-function ValueForm(recever){
-    this.recever = recever;
-    this.first = "first";
-    this.last = "last";
-    this.email = "email";
-    this.message = "message";
+function ValueForm(photographerId, First, Last, Email, Message){
+    this.photographerId = photographerId;
+    this.first = First;
+    this.last = Last;
+    this.email = Email;
+    this.message = Message;
     this.getInfo = function(){
-        var valueForm =[];
-        valueForm.push('PhotographerId : '+this.recever);
-        valueForm.push('First : '+this.first);
-        valueForm.push('Last : '+this.last);
-        valueForm.push('Email : '+this.email);
-        valueForm.push('Message : '+this.message);
-        envoiForm.push(valueForm);
-        console.log(JSON.stringify(envoiForm));
+        var valueForm ={
+        "PhotographerId" :this.photographerId,
+        "First" : this.first,
+        "Last" : this.last,
+        "Email" : this.email,
+        "Message" : this.message}
+        return valueForm
     };
 };
 
 function constructionForm(){
-    var myFormulaire = new ValueForm(sourcePers.id);
-    myFormulaire.first = firstValue;
-    myFormulaire.last = lastValue;
-    myFormulaire.email = emailValue;
-    myFormulaire.message = messageValue;
-    myFormulaire.getInfo();
+    var myFormulaire = new ValueForm(sourcePers.id,firstValue,lastValue,emailValue,messageValue);
+    console.log(myFormulaire.getInfo());
 }
